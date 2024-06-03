@@ -34,8 +34,8 @@ public class 실습3_6_0스트링배열정렬이진탐색 {
 	// 배열의 내용을 출력하는 메서드
 	static void showData(String msg, String[] data) {
 		System.out.println(msg);
-		for(String s : data) {
-			System.out.print(s + " ");
+		for(String d : data) {
+			System.out.print(d + " ");
 		}
 	}
 	

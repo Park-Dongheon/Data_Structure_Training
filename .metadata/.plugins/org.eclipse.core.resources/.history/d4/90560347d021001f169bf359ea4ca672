@@ -1,0 +1,81 @@
+package Chapter3_검색알고리즘;
+
+/*
+ * 3장 5번 실습과제 - 스트링 리스트 정렬
+ * 리스트를 배열로 변환후 중복제거후 다시 리스트 만들기 등 실습
+ */
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class 스트링리스트정렬 {
+
+//	    public static String[] removeElement1(String[] arr, String item) {}
+
+	static void getList(List<String> list) {
+		list.add("서울");list.add("북경");
+		list.add("상해");list.add("서울");
+		list.add("도쿄");list.add("뉴욕");
+
+		list.add("런던");list.add("로마");
+		list.add("방콕");list.add("북경");
+		list.add("도쿄");list.add("서울");
+
+		list.add(1, "LA");
+	}
+
+	static void showList(String topic, List<String> list) {
+		System.out.println(topic);
+		for (String city : list) {
+			System.out.print(city + " ");
+		}
+		System.out.println();
+	}
+
+	static void sortList(List<String> list) {
+    	Set<String> set = new HashSet<>(list);
+    	list.clear();
+    	list.addAll(set);
+
+
+//	    	// 리스트를 베열로 변환
+//	    	list.toArray();		// list 객체를 Array 배열로 변환
+//	    	// 배열에서 중복제거, 방법1, 방법2
+//	    	// 배열에서 정렬
+//	    	// 배열을 리스트로 저장
+	}
+
+	static String[] removeDuplicateList(List<String> list) {
+		String cities[] = new String[0];
+		cities = list.toArray(cities);
+
+		return cities;
+	}
+
+	public static void main(String[] args) {
+		ArrayList<String> list = new ArrayList<>();
+		getList(list);
+
+		// 오름차순으로 정렬, 내림차순으로 정렬
+		showList("입력후", list);
+		Collections.sort(list);
+		showList("\n오름차순 정렬후", list);
+		Collections.reverse(list);
+		showList("\n내림차순 정렬후", list);
+
+		// 배열에서 중복제거
+		sortList(list);
+		showList("중복 제거후", list);
+
+		System.out.println();
+		System.out.println("중복제거::");
+
+		String[] cities = removeDuplicateList(list);
+		ArrayList<String> lst = new ArrayList<>(Arrays.asList(cities)); // 배열을 다시 리스트로 변환
+		showList("중복제거후", lst);
+	}
+
+}
