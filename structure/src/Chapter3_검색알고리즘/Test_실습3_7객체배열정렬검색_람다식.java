@@ -1,4 +1,4 @@
-package Chap3_검색;
+package Chapter3_검색알고리즘;
 
 import java.util.Comparator;
 
