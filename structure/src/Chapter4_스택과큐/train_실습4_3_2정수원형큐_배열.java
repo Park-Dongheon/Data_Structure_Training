@@ -13,8 +13,8 @@ import java.util.Scanner;
 //int형 고정 길이 큐
 
 class IntQueue3 {
-	private int[] que; // 큐용 배열
-	private int capacity; // 큐의 크기
+	private int[] que; // 큐용 배열, 본체를 참조하는 배열 변수 선언
+	private int capacity; // 큐의 최대 용량을 저장
 	private int front; // 맨 처음 요소 커서
 	private int rear; // 맨 끝 요소 커서
 
@@ -35,21 +35,21 @@ class IntQueue3 {
 //--- 생성자(constructor) ---//
 	public IntQueue3(int maxlen) {
 		front = rear = -1;	// 맨 처음 요소, 맨 끝 요소 커서
-		capacity = maxlen;	// 큐의 크기
+		capacity = maxlen;	// 배열 que에 저장할 수 있는 최대 요솟수 
 		try {
-			que = new int[capacity];	// 큐용 배열
-		}catch (OutOfMemoryError e) {
+			que = new int[capacity];	// 큐 본체용 배열을 생성
+		}catch (OutOfMemoryError e) {	// 생성할 수 없을 때
 			capacity = 0;
 		}
 	}
 
 //--- 큐에 데이터를 인큐 ---//
 	public int enque(int x) throws OverflowIntQueue3Exception {
-
-		if(rear >= capacity)
+		int tag = rear + 1;
+		if(tag >= capacity)
 			throw new OverflowIntQueue3Exception("Queue is full");
 		que[++rear] = x;
-		if(rear == capacity)
+		if(rear == front)
 			rear = 0;
 		return x;
 	}
@@ -81,7 +81,7 @@ class IntQueue3 {
 
 //--- 큐에 쌓여 있는 데이터 개수를 반환 ---//
 	public int size() {
-		return que.length;
+		return que.length - ;
 	}
 
 //--- 큐가 비어있는가? ---//
@@ -96,6 +96,11 @@ class IntQueue3 {
 
 //--- 큐 안의 모든 데이터를 프런트 → 리어 순으로 출력 ---//
 	public void dump() {
+		if(rear == front)
+			System.out.println("큐가 비어 있습니다.");
+		else {
+			for(int i = 0; i < que.length)
+		}
 
 	}
 }

@@ -51,7 +51,7 @@ class Queue4 {
 		que.add(x);		// que에 데이터를 추가
 		rear++;		// rear 증가
 		if(rear == que.size())		//rear가 que의 크기와 같으면
-			rear = 0;		// rear를 0으로 초기화
+			rear = 0;
 		return x;		// x값 반환
 	}
 
@@ -61,8 +61,8 @@ class Queue4 {
 			throw new EmptyQueueException("Qeque: Queue is empty");		// EmptyQueueException를 발생
 		int x = que.remove(front);		// que에서 front 위치의 데이터를 제거하고 x에 저장
 		rear--;
-		if(front == capacity)		// front가 라수투크기와 같으면
-			front = 0;		// front를 0으로 초기화
+		if(front == capacity)		// front가 리스트크기와 같으면
+			front = 0;
 		return x;		// x반환
 
 	}
