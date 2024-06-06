@@ -1,0 +1,49 @@
+package Chapter4_스택과큐;
+
+public class CircularQueue_test {
+	private int[] queue;
+	private int front;
+	private int rear;
+	private int size;
+	private int capacity;
+	
+	public CircularQueue_test(int capacity) {
+		this.capacity = capacity;
+		this.queue = new int[capacity];
+		this.front = -1;
+		this.rear = -1;
+		this.size = 0;
+	}
+	
+	public boolean isFull() {
+		return size == capacity;
+	}
+	
+	public boolean isEmpty() {
+		return size == 0;
+	}
+	
+	public void enqueue(int item) {
+		if(isFull()) {
+			throw new RuntimeException("Queue is full");
+		}
+		rear = (rear + 1) % capacity;
+		queue[rear] = item;
+		if(front == -1) {
+			front = rear;
+		}
+		size++;
+	}
+	
+	public int dequeue() {
+		if(Empty()) {
+			throw new RuntimeException("Queue is empty");
+		}
+		return queue[front];
+	}
+	
+	public static void main(String[] args) {
+		CircularQueue cq = new CircularQueue(5);
+	}
+	
+}

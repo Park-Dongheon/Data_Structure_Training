@@ -1,0 +1,18 @@
+package Chapter4_스택과큐;
+
+public class CircularQueue_test {
+	private int[] queue;
+	private int front;
+	private int rear;
+	private int size;
+	private int capacity;
+	
+	public CircularQueue_test(int capacity) {
+		
+	}
+	
+	public static void main(String[] args) {
+		CircularQueue cq = new CircularQueue(5);
+	}
+	
+}
