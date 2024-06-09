@@ -6,6 +6,8 @@ package Chapter4_스택과큐;
 
 import java.util.Scanner;
 
+import Chapter4_스택과큐.IntQueue3.EmptyIntQueue3Exception;
+
 /*
 * Queue of ArrayList
 */
@@ -110,7 +112,7 @@ class Queue4 {
 //--- 큐 안의 모든 데이터를 프런트 → 리어 순으로 출력 ---//
 	public void dump() {
 		if(isEmpty())		// 큐가 비어 있으면 출력 
-			System.out.println("queue가 비어있습니다.");
+			throw new EmptyQueueException("Queue is Empty");
 		else {
 			for(int i = front; i < rear; i++) {		// front부터 rear까지 데이터 출력
 				System.out.print(que.get(i) + " ");
@@ -132,6 +134,7 @@ public class 실습4_3_1정수선형큐_리스트 {
 			System.out.print("(1)인큐　(2)디큐　(3)피크　(4)덤프  (5)검색　(0)종료: ");
 			int menu = stdIn.nextInt();
 			switch (menu) {
+			
 			case 1: // 인큐
 				rndx = random.nextInt(1, 20);
 				System.out.print("입력데이터: (" + rndx +")" + "\n");
@@ -161,7 +164,11 @@ public class 실습4_3_1정수선형큐_리스트 {
 				break;
 
 			case 4: // 덤프
-				oq.dump();
+				try {
+					oq.dump();					
+				} catch (Queue4.EmptyQueueException e) {
+					System.out.println("\n큐가 비어 있습니다.");
+				}
 				break;
 			
 			case 5: // 검색

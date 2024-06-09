@@ -9,4 +9,5 @@
     <fullyQualifiedTypeName name="java.lang.Double"/>
     <fullyQualifiedTypeName name="java.text.ParseException"/>
     <fullyQualifiedTypeName name="java.util.Iterator"/>
+    <fullyQualifiedTypeName name="Chapter4_스택과큐.IntQueue3.EmptyIntQueue3Exception"/>
 </qualifiedTypeNameHistroy>
