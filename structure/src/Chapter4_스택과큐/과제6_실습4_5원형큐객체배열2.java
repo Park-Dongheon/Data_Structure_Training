@@ -184,7 +184,7 @@ public class 과제6_실습4_5원형큐객체배열2 {
 			case 4: // 덤프
                 try {
                     oq.dump(); // 큐의 모든 데이터 출력
-                } catch (objectQueue2.EmptyQueueException e) {
+                } catch (CircularQueue.EmptyQueueException e) {
                     System.out.println("\n큐가 비어 있습니다."); // 언더플로우 예외 발생 시 메시지 출력
                 }
                 break;

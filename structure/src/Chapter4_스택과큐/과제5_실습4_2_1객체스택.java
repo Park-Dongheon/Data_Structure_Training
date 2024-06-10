@@ -108,7 +108,7 @@ class objectStack{
 //--- 스택에서 x를 찾아 인덱스(없으면 –1)를 반환 ---//
 	public int indexOf(Point2 x) {
 		//구현
-		for(int i = data.size() - 1; i >= 0; i--)		// 스택을 역순으로 탐색
+		for(int i = top - 1; i >= 0; i--)		// 스택을 역순으로 탐색
 			if(data.get(i).equals(x)) 		// 데이터가 같은 경우 해당 인덱스 반환
 				return i;
 		return -1;		// 데이터가 없는 경우 -1 반환
