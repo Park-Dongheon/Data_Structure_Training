@@ -16,6 +16,8 @@ import Chapter5_재귀알고리즘.Stack4.EmptyGenericStackException;
  * Queen/8, rook/8, bishop/?, knight/? rook 2개/a, h, knight 2개/b, g, bishop
  * 2개/c, f, queen 1개/black queen 은 black 칸에, 폰 8개
  */
+
+//좌표를 나타내는 Point 클래스 정의
 class Point {
 	private int ix;
 	private int iy;
@@ -42,8 +44,7 @@ class Point {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o == null && getClass() != o.getClass())
-			return false;
+		if (o == null || getClass() != o.getClass()) return false;
 		Point p = (Point) o;
 		return ix == p.ix && iy == p.iy;
 	}
@@ -155,37 +156,54 @@ class Stack4 {
 
 public class 과제7_QueenEight_구현과제_최종수정본 {
 
-	public static void EightQueen(int[][] d) throws EmptyGenericStackException {
+	public static void EightQueen(int[][] d) throws Stack4.EmptyGenericStackException {
 		int count = 0;// 퀸 배치 갯수
-		int numberSolutions = 0;
-		int ix = 0, iy = 0;// 행 ix, 열 iy
-		Stack4 st = new Stack4(100); // 100개를 저장할 수 있는 스택을 만들고
-		Point p = new Point(ix, iy);// 현 위치를 객체로 만들고
-		d[ix][iy] = 1;// 현 위치 d[0][0]에 queen을 넣었다는 표시를 하고
-		count++;
-		ix++; iy=0;
+		int numberSolutions = 0; // 가능한 해의 수
+		int ix = 0, iy = 0;// 현재 행 ix, 열 iy
+		Stack4 st = new Stack4(100); // 100개를 저장할 수 있는 스택 생성
+		Point p = new Point(ix, iy);// 현 위치를 객체로 생성
+		d[ix][iy] = 1;// 현 위치 d[0][0]에 queen 배치 표시
+		count++; // 퀸 배치 갯수 증가
+		ix++; // 다음 행으로 이동
 		st.push(p);// 스택에 현 위치 객체를 push
-		while (true) {
-			iy = nextMove(d, ix, iy); // 현재 ix = 1, iy = 0;
-			if (iy < 0) {
-				p = st.pop(); // pop() 처리
-				iy = p.getIY();
-				ix = p.getIX();
-				d[ix][iy] = 0;
-				count--;
-				// 물리기는 pop한 것이다 > 그 다음칸에 배치할 수 있는지를 체크한다.
-				// ix를 증가시켜서 queen을 놓을 수 있는지 체크 => nextMove() 호출하여 처리
-			} else {
-				p = new Point(iy, ix);
-				st.push(p);
-				count++;
-				iy++;
-				continue;
-			}
-		}
-		
+				
+	    while (true) {	// 열을 이동하면서 퀸을 배치하는 작업을 반복
+	        while (ix < 8) {	// 8행 이전에만 실행
+	            iy = nextMove(d, ix, iy); // 현재 ix = 1, iy = 0, 다음 이동할 열 결정
+	            if (iy < 0) {	// iy가 음수인 경우(다음 이동할 열이 없는 경우)
+	                p = st.pop(); // 스택에서 위치 꺼내기
+	                ix = p.getIX();
+	                iy = p.getIY();
+	                d[ix][iy] = 0; // 해당 위치에 있는 퀸 제거
+	                count--;
+	                iy++; // 다음 열로 이동
+	                // 물리기는 pop한 것이다 > 그 다음칸에 배치할 수 있는지를 체크한다.
+	                // ix를 증가시켜서 queen을 놓을 수 있는지 체크 => nextMove() 호출하여 처리	
+	            } else {	// iy가 음수가 아닌 경우(다음 이동할 열이 있는 경우)
+	                p = new Point(ix, iy);	// 퀸을 해당 위치에 배치
+	                st.push(p);	// 스택에 추가
+	                d[ix][iy] = 1; // 퀸 배치 표시
+	                count++;
+	                ix++;	// 다음 행으로 이동
+	                iy = 0; // 첫 번째 열부터 시작
+	            }
+	        }
+	        numberSolutions++;	// 해의 수를 증가
+	        showQueens(d);	// 현재 퀸의 배치를 출력
+	        if (st.isEmpty()) {	// 스택이 비어있는지 확인, 비어잇으면 모든 가능한 해를 찾은 것
+	            System.out.println("총 가능한 해의 개수 : " + numberSolutions);	// 92
+	            return;
+	        }
+	        p = st.pop();	// 스택에서 위치를 꺼냄
+	        ix = p.getIX();
+	        iy = p.getIY();
+	        d[ix][iy] = 0;	// 해당 위치에 있는 퀸 제거
+	        count--;
+	        iy++; // 다음 열로 이동
+	    }
 	}
 
+	// 특정 행에 퀸을 배치할 수 있는지 검사하는 메서드
 	public static boolean checkRow(int[][] d, int crow) { // 배열 d 에서 행 crow 에 퀸을 배치할 수 있는지 조사
 		for (int j = 0; j < d.length; j++) {	// 행 crow 의 모든 열을 검사
 			if (d[crow][j] == 1)	// 열에 퀸(1)이 이미 존재할 경우, 배치할 수 없음
@@ -194,9 +212,9 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 		return true;	// 행 crow 에 퀸을 배치 가능
 	}
 
+	// 특정 열에 퀸을 배치할 수 있는지 검사하는 메서드
 	public static boolean checkCol(int[][] d, int ccol) {// 배열 d에서 열 ccol에 퀸을 배치할 수 있는지 조사
 		for (int i = 0; i < d[0].length; i++) {		// 열 ccol 의 모든 행을 검사
-			if(ccol >= d[0].length) return false
 			if (d[i][ccol] == 1)	// 행에 퀸(1)이 이미 존재할 경우, 배치할 수 없음
 				return false;
 		}
@@ -206,93 +224,86 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 	// 배열 d에서 행 cx, 열 cy에 퀸을 남서, 북동 대각선으로 배치할 수 있는지 조사
 	public static boolean checkDiagSW(int[][] d, int cx, int cy) {	// x++, y-- or x--, y++ where 0<= x, y <= 7
 		int x = cx, y = cy;
+		// 남서 방향 대각선 검사
 		while (x >= 0 && x < d.length && y >= 0 && y < d[0].length) {
 			if(d[x][y] == 1)
-				return false;
-			x++;	y--;
+				return false; // 이미 퀸이 배치된 경우
+			x++; // 행 증가
+			y--; // 열 감소
 		}
 		
 		x = cx; y = cy;
+		 // 북동 방향 대각선 검사
 		while (x >= 0 && x < d.length && y >= 0 && y < d[0].length) {
 			if(d[x][y] == 1)
-				return false;
-			x--;	y++;
+				return false; // 이미 퀸이 배치된 경우
+			x--; // 행 감소
+			y++; // 열 증가
 		}
-		return true;
+		return true; // 배치 가능
 	}
 
 	// 배열 d에서 행 cx, 열 cy에 퀸을 남동, 북서 대각선으로 배치할 수 있는지 조사
 	public static boolean checkDiagSE(int[][] d, int cx, int cy) {	// x++, y++ or x--, y--
 		int x = cx, y = cy;
+		// 남동 방향 대각선 검사
 		while(x >= 0 && x < d.length && y >= 0 && y < d[0].length) {
 			if(d[x][y] == 1)
-				return false;
-			x++;	y++;
+				return false; // 이미 퀸이 배치된 경우
+			x++; // 행 증가
+			y++; // 열 증가
 		}
 		
 		x = cx; y = cy;
+		// 북서 방향 대각선 검사
 		while(x >= 0 && x < d.length && y >= 0 && y < d[0].length) {
 			if(d[x][y] == 1)
-				return false;
-			x--;	y--;
+				return false; // 이미 퀸이 배치된 경우
+			x--; // 행 감소
+			y--; // 열 감소
 		}
-		return true;
+		return true; // 배치 가능
 	}
 
 	// 배열 d에서 (x,y)에 퀸을 배치할 수 있는지 조사
 	public static boolean checkMove(int[][] d, int x, int y) {// (x,y)로 이동 가능한지를 check
-		int ix = x, iy = y;
-		
-		for(int i = 0; i < d.length; i++) {
-			if(d[ix][i] == 1 || d[i][iy] == 1 )
-				return false;
-		}
-		
-		int diag_ix = x + 1, diag_iy = y + 1, diag_dy = y - 1; 
-		for(int i = 0; i < d.length; i++) {
-			if(d[diag_ix][diag_iy] == 1 && d[diag_ix][diag_dy] == 1) {
-				return false;
-			}
-		}
-		
-		int diag_dx = x - 1;
-		diag_iy = y + 1; diag_dy = y - 1; 
-		for(int i = 0; i < d.length; i++) {
-			if(d[diag_dx][diag_iy] == 1 && d[diag_dx][diag_dy] == 1) {
-				return false;
-			}
-		}
-		
-		return true;
+		// 모든 조건을 만족해야 배치 가능
+		return checkRow(d, x) && checkCol(d, y) && checkDiagSW(d, x, y) && checkDiagSE(d, x, y);
 	}
 
 	// 배열 d에서 현재 위치(row,col)에 대하여, 다음에 이동할 위치 nextCol을 반환, 이동이 가능하지 않으면 -1를 리턴
 	public static int nextMove(int[][] d, int row, int col) {// 현재 row, col에 대하여 이동할 col을 return
-		if(checkRow(d, row) && checkCol(d, col) && checkDiagSW(d, row, col) && checkDiagSE(d, row, col)) {
-			return col;
-		}
-		return -1;
-	}
-
-	static void showQueens(int[][] data) {// 배열 출력
-		for(int i = 0; i < data.length; i++) {
-			for(int j = 0; j < data[0].length; j++) {
-				System.out.print(data[i][j] + " ");
+		for(int j = col; j < d.length; j++) {	// 현재 열부터 끝까지 검사
+			if(checkMove(d, row, j)) {	// 이동 가능한 열인 경우
+				return j; // 해당 열 반환			
 			}
-			System.out.println();
 		}
+		return -1; // 이동할 열이 없음
 	}
 
-	public static void main(String[] args) throws EmptyGenericStackException {
-		int row = 8, col = 8;
-		int[][] data = new int[8][8]; // 8 x 8 행열 배열 선언 초기화
+	// 퀸 배치 결과를 출력하는 메서드
+	static void showQueens(int[][] data) {// 배열 출력
+	    for (int i = 0; i < data.length; i++) {
+	        for (int j = 0; j < data[0].length; j++) {
+	        	System.out.print(data[i][j] + " "); // Queen이 없는 위치에는 값 그대로 출력
+//	            if (data[i][j] == 1) {
+//	                System.out.print("Q "); // Queen이 있는 위치에는 'Q' 출력
+//	            } else {
+//	            }
+	        }
+	        System.out.println();
+	    }
+	    System.out.println();
+	}
+
+	public static void main(String[] args) throws Stack4.EmptyGenericStackException {
+		int row = 8, col = 8;	// 행과 열의 크기 설정
+		int[][] data = new int[row][col]; // 8 x 8 행열 배열 선언 초기화
 
 		for (int i = 0; i < data.length; i++) // 행열의 요소를 0으로 초기화
 			for (int j = 0; j < data[0].length; j++)
-				data[i][j] = 0;
+				data[i][j] = 0;	// 0으로 초기화
 
 		EightQueen(data); // EightQueen() 메서드 호출
-		showQueens(data);
-
 	}
 }

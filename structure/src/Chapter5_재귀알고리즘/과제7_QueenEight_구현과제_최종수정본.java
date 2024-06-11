@@ -171,6 +171,10 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 	        while (ix < 8) {	// 8행 이전에만 실행
 	            iy = nextMove(d, ix, iy); // 현재 ix = 1, iy = 0, 다음 이동할 열 결정
 	            if (iy < 0) {	// iy가 음수인 경우(다음 이동할 열이 없는 경우)
+	                if (st.isEmpty()) { // 스택이 비어 있는지 확인
+	                    System.out.println("총 가능한 해의 개수 : " + numberSolutions); // 92
+	                    return;
+	                }
 	                p = st.pop(); // 스택에서 위치 꺼내기
 	                ix = p.getIX();
 	                iy = p.getIY();
@@ -190,10 +194,6 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 	        }
 	        numberSolutions++;	// 해의 수를 증가
 	        showQueens(d);	// 현재 퀸의 배치를 출력
-	        if (st.isEmpty()) {	// 스택이 비어있는지 확인, 비어잇으면 모든 가능한 해를 찾은 것
-	            System.out.println("Number of solutions: " + numberSolutions);	// 92
-	            return;
-	        }
 	        p = st.pop();	// 스택에서 위치를 꺼냄
 	        ix = p.getIX();
 	        iy = p.getIY();
@@ -288,7 +288,7 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 	            if (data[i][j] == 1) {
 	                System.out.print("Q "); // Queen이 있는 위치에는 'Q' 출력
 	            } else {
-	                System.out.print(data[i][j] + " "); // Queen이 없는 위치에는 값 그대로 출력
+	            	System.out.print(data[i][j] + " "); // Queen이 없는 위치에는 값 그대로 출력
 	            }
 	        }
 	        System.out.println();
