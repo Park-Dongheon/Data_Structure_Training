@@ -17,6 +17,7 @@ import Chapter5_재귀알고리즘.Stack4.EmptyGenericStackException;
  * 2개/c, f, queen 1개/black queen 은 black 칸에, 폰 8개
  */
 
+
 //좌표를 나타내는 Point 클래스 정의
 class Point {
 	private int ix;
@@ -194,6 +195,7 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 	        }
 	        numberSolutions++;	// 해의 수를 증가
 	        showQueens(d);	// 현재 퀸의 배치를 출력
+	        System.out.println("퀸 배치 개수 " + count + "\n");
 	        p = st.pop();	// 스택에서 위치를 꺼냄
 	        ix = p.getIX();
 	        iy = p.getIY();
@@ -293,7 +295,6 @@ public class 과제7_QueenEight_구현과제_최종수정본 {
 	        }
 	        System.out.println();
 	    }
-	    System.out.println();
 	}
 
 	public static void main(String[] args) throws Stack4.EmptyGenericStackException {
