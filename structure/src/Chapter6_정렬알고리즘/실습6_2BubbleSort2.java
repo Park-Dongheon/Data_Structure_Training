@@ -19,18 +19,18 @@ public class 실습6_2BubbleSort2 {
 	static void bubbleSort(int[] a, int n) {
 		int count = 0;
 		for (int i = 0; i < n - 1; i++) {
-			int exchg = 0; // 패스에서 교환하는 횟수
+			int exchg = 0; // 패스에서 교환하는 횟수, 일종의 태그
 			for (int j = n - 1; j > i; j--) {
 				count++;
 				if (a[j - 1] > a[j]) {
 					swap(a, j - 1, j);
-					exchg++;
+					exchg++;	// 교환이 되면 증가
 				}
 			}
-			if (exchg == 0)
+			if (exchg == 0)		// 교환이 멈춤
 				break; // 교환이 이루어지지 않으면 멈춤 - 추가된 코드
 		}
-		System.out.println("\n비교 횟수 = " + count);
+		System.out.println("\n비교 횟수 = " + count);	// ex)100입력시 4895
 	}
 
 	static void showData(int[] d) {

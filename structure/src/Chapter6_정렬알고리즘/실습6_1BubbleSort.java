@@ -22,14 +22,14 @@ public class 실습6_1BubbleSort {
 	// --- 버블 정렬 ---//
 	static void bubbleSort(int[] a, int n) {
 		int count = 0;
-		for (int i = 0; i < n - 1; i++)// 패스
-			for (int j = n - 1; j > i; j--)// 끝에서 앞쪽으로 이동하면서 버블 처리
+		for (int i = 0; i < n - 1; i++)// 패스, 	n번 반복, ex)100입력시 -> 100번 반복
+			for (int j = n - 1; j > i; j--)// 에서 앞쪽으로 이동하면서 버블 처리, 	n-k번 반복, ex)100입력시 -> 50번 반복
 			{
 				count++;
-				if (a[j - 1] > a[j])// 버블
-					swap(a, j - 1, j);
+				if (a[j - 1] > a[j])// 버블, 실행하는 횟수 : n * (n - k) = n*2 - nk + α = O(n*2)--(시간 복잡도)
+					swap(a, j - 1, j);	// straight exchange
 			}
-		System.out.println("\n비교 횟수 = " + count);
+		System.out.println("\n비교 횟수 = " + count);	// ex)100입력시 4950
 	}
 
 	static void showData(int[] d) {

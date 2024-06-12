@@ -27,12 +27,12 @@ public class 실습6_3BubbleSort3 {
 				count++;
 				if (a[j - 1] > a[j]) {
 					swap(a, j - 1, j);
-					last = j;// last을 사용한 성능 개선 구현
+					last = j;// last을 사용한 성능 개선 구현, 마지막 요소의 위치를 저장
 				}
 			}
 			k = last;
 		}
-		System.out.println("\n비교횟수 = " + count);
+		System.out.println("\n비교횟수 = " + count);		// ex)100입력시 4575
 	}
 
 	static void showData(int[] d) {

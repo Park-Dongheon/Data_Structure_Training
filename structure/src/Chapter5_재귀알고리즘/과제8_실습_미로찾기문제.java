@@ -11,7 +11,6 @@ package Chapter5_재귀알고리즘;
 import java.util.ArrayList;
 import java.util.List;
 
-import Chapter5_재귀알고리즘.StackList.EmptyGenericStackException;
 
 //23.2.16 수정
 //23.2.24: 객체 배열 초기화, static 사용, 내부 클래스와 외부 클래스 사용 구분을 못하는 문제 => 선행 학습 필요

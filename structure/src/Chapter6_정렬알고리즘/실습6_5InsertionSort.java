@@ -23,7 +23,7 @@ public class 실습6_5InsertionSort {
 			count++;
 			a[j] = tmp;// tmp를 insert한다.
 		}
-		System.out.println("\n비교횟수 = " + count);
+		System.out.println("\n비교횟수 = " + count);		//ex)100입력시 2360
 	}
 
 	static void showData(int[] d) {
