@@ -1,23 +1,84 @@
 package Chapter6_정렬알고리즘;
 
+import java.util.EmptyStackException;
+
 //퀵 정렬(비재귀 버전) - 교재 버젼으로 stack을 2개 사용하는 문제가 있다 
 
 import java.util.Scanner;
 
-class Point {
+class PointQ{
+	private int left;
+	private int right;
+	
+	public PointQ(int left, int right) {
+		this.left = left;
+		this.right = right;
+	}
+
+	public int getLeft() {
+		return left;
+	}
+
+	public void setLeft(int left) {
+		this.left = left;
+	}
+
+	public int getRight() {
+		return right;
+	}
+
+	public void setRight(int right) {
+		this.right = right;
+	}
+
+	@Override
+	public String toString() {
+		return "Point [left=" + left + ", right=" + right + "]";
+	}
 	
 }
 
 
 class IntStack {
+	private PointQ[] stack;
+	private int capacity;
+	private int top;
 	
-	int left;
-	int right;
+	public IntStack(int capacity) {
+		stack = new PointQ[capacity];
+		this.capacity = capacity;
+		top = 0;
+	}
+
+	public PointQ push(PointQ pq) {
+		if (isFull()) {
+			throw new StackOverflowError("Stack is Full");
+		}
+		stack[top] = pq;
+		return stack[top++];
+	}
+
+	public PointQ pop() {
+		if (isEmpty()) {
+			throw new EmptyStackException();
+		}
+		return stack[top++];
+	}
 	
+	public int getCapacity() {
+		return capacity;
+	}
 	
-	public IntStack(Point p) {
-		this.left = left;
-		this.right = right;
+	public int size() {
+		return top;
+	}
+	
+	public boolean isFull() {
+		return top <= 0;
+	}
+	
+	public boolean isEmpty() {
+		return top >= capacity;
 	}
 	
 	
@@ -37,18 +98,18 @@ public class 실습6_10QuickSortStack {
 //		IntStack lstack = new IntStack(right - left + 1);
 //		IntStack rstack = new IntStack(right - left + 1);
 
-		Point p = new Point(left, right);
-		st.push(p);
+		PointQ pq = new PointQ(left, right);
+		stack.push(pq);
 //     lstack.push(left);
 //     rstack.push(right);
 
-		while (!lstack.isEmpty()) {
-			p = st.pop();
-			int pl = left = p.left;
-			int pr = right = p.right;
+		while (!stack.isEmpty()) {
+			pq = stack.pop();
+			int pl = left = pq.getLeft();
+			int pr = right = pq.getRight();
 
-			int pl = left = lstack.pop(); // 왼쪽 커서
-			int pr = right = rstack.pop(); // 오른쪽 커서
+//			int pl = left = lstack.pop(); // 왼쪽 커서
+//			int pr = right = rstack.pop(); // 오른쪽 커서
 			int x = a[(left + right) / 2]; // 피벗은 가운데 요소
 
 			do {
@@ -63,13 +124,17 @@ public class 실습6_10QuickSortStack {
 			System.out.println();
 			if (left < pr) {
 				System.out.println("left = " + left + ", pr = " + pr);
-				lstack.push(left); // 왼쪽 그룹 범위의
-				rstack.push(pr); // 인덱스를 푸시
+				PointQ pq2 = new PointQ(left, pr);
+				stack.push(pq2);
+//				lstack.push(left); // 왼쪽 그룹 범위의
+//				rstack.push(pr); // 인덱스를 푸시
 			}
 			if (pl < right) {
 				System.out.println("pl = " + pl + ", right = " + right);
-				lstack.push(pl); // 오른쪽 그룹 범위의
-				rstack.push(right); // 인덱스를 푸시
+				PointQ pq2 = new PointQ(pl, right);
+				stack.push(pq2);
+//				lstack.push(pl); // 오른쪽 그룹 범위의
+//				rstack.push(right); // 인덱스를 푸시
 			}
 		}
 	}

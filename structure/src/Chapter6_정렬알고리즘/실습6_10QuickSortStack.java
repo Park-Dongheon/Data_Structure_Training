@@ -54,14 +54,15 @@ class IntStack {
 		if (isFull()) {
 			throw new StackOverflowError("Stack is Full");
 		}
-		return stack[--top];
+		stack[top] = pq;
+		return stack[top++];
 	}
 
 	public PointQ pop() {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		return stack[top++];
+		return stack[--top];
 	}
 	
 	public int getCapacity() {
@@ -73,11 +74,11 @@ class IntStack {
 	}
 	
 	public boolean isFull() {
-		return top <= 0;
+		return top >= capacity;
 	}
 	
 	public boolean isEmpty() {
-		return top >= capacity;
+		return top <= 0;
 	}
 	
 	
