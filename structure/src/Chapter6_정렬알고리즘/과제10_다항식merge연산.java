@@ -1,6 +1,6 @@
 package Chapter6_정렬알고리즘;
 
-class Polynomial implements Comparable<Polynomial>{
+class Term implements Comparable<Term>{
     double coef;           // 계수
     int    exp;            // 지수
 
@@ -8,12 +8,12 @@ class Polynomial implements Comparable<Polynomial>{
 }
 public class 과제10_다항식merge연산 {
 
-	static void merge(Polynomial[] a, int lefta, int righta, int leftb, int rightb ) {
+	static void merge(Term[] a, int lefta, int righta, int leftb, int rightb ) {
 
 	}
 
 	// --- 퀵 정렬(비재귀 버전)---//
-	static void MergeSort(Polynomial[] a, int left, int right) {
+	static void MergeSort(Term[] a, int left, int right) {
 		int mid = (left+right)/2;
 		if (left == right) return;
 		MergeSort(a, left, mid);
@@ -23,34 +23,34 @@ public class 과제10_다항식merge연산 {
 	}
 
 	public static void main(String[] args) {
-		Polynomial[] x = {
-		         new Polynomial(1.5, 3),
-		         new Polynomial(2.5, 7),
-		         new Polynomial(3.3, 2),
-		         new Polynomial(4.0, 1),
-		         new Polynomial(2.2, 0),
-		         new Polynomial(3.1, 4),
-		         new Polynomial(3.8, 5),
+		Term[] polynomialX = {
+		         new Term(1.5, 3),
+		         new Term(2.5, 7),
+		         new Term(3.3, 2),
+		         new Term(4.0, 1),
+		         new Term(2.2, 0),
+		         new Term(3.1, 4),
+		         new Term(3.8, 5),
 		     };
-		Polynomial[] y = {
-		         new Polynomial(1.5, 1),
-		         new Polynomial(2.5, 2),
-		         new Polynomial(3.3, 3),
-		         new Polynomial(4.0, 0),
-		         new Polynomial(2.2, 4),
-		         new Polynomial(3.1, 5),
-		         new Polynomial(3.8, 6),
+		Term[] polynomialY = {
+		         new Term(1.5, 1),
+		         new Term(2.5, 2),
+		         new Term(3.3, 3),
+		         new Term(4.0, 0),
+		         new Term(2.2, 4),
+		         new Term(3.1, 5),
+		         new Term(3.8, 6),
 		     };
 		int nx = x.length;
 
-
+		// ex) f(x) = 5x**3  + 4x**2
 		ShowPolynomial(x);
 		ShowPolynomial(y);
 		MergeSort(x, 0, x.length - 1); // 배열 x를 퀵정렬
 		MergeSort(y, 0, y.length - 1); // 배열 x를 퀵정렬
 		ShowPolynomial(x);
 		ShowPolynomial(y);
-		Polynomial[] z = new Polynomial[20];
+		Term[] polynomialZ = new Term[20];
 		AddPolynomial(x,y,z);//다항식 덧셈 z = x + y
 		ShowPolynomial(z);
 		ShowPolynomial(y);

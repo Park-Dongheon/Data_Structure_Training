@@ -1,0 +1,30 @@
+package Chapter6_정렬알고리즘;
+
+import java.util.Scanner;
+
+public class MergeTest2 {
+	static int[] buff;		// 작업용 배열
+	
+	private static void merge(int[] x, int nx) {
+		buff = new int[nx];		// 작업용 배열을 생성, 크기 12
+		
+		__mergeSort(x, 0, nx - 1)		// 배열 전체를 병합 정렬
+		
+		buff = null;		// 작업용 배열을 해제
+	}
+
+	public static void main(String[] args) {
+		Scanner stdIn = new Scanner(System.in);
+		
+		System.out.println("병합 정렬");
+		
+		int x[] = {5, 6, 4, 8, 3, 7, 9, 0, 1, 5, 2, 3};
+		int nx = 12;
+		
+		merge(x, nx);		// 배열 x를 병합 정렬
+		
+		System.out.println("오름차순으로 정렬했습니다.");
+		
+	}
+
+}
