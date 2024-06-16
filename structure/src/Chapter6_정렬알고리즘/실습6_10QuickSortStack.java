@@ -19,16 +19,8 @@ class PointQ{
 		return left;
 	}
 
-	public void setLeft(int left) {
-		this.left = left;
-	}
-
 	public int getRight() {
 		return right;
-	}
-
-	public void setRight(int right) {
-		this.right = right;
 	}
 
 	@Override
@@ -54,14 +46,15 @@ class IntStack {
 		if (isFull()) {
 			throw new StackOverflowError("Stack is Full");
 		}
-		return stack[--top];
+		stack[top] = pq;
+		return stack[top++];
 	}
 
 	public PointQ pop() {
 		if (isEmpty()) {
 			throw new EmptyStackException();
 		}
-		return stack[top++];
+		return stack[--top];
 	}
 	
 	public int getCapacity() {
@@ -73,11 +66,11 @@ class IntStack {
 	}
 	
 	public boolean isFull() {
-		return top <= 0;
+		return top >= capacity;
 	}
 	
 	public boolean isEmpty() {
-		return top >= capacity;
+		return top <= 0;
 	}
 	
 	
@@ -145,24 +138,24 @@ public class 실습6_10QuickSortStack {
 	}
 
 	public static void main(String[] args) {
-		Scanner stdIn = new Scanner(System.in);
+		try (Scanner stdIn = new Scanner(System.in)) {
+			System.out.println("퀵 정렬");
+			System.out.print("요솟수: ");
+			int nx = stdIn.nextInt();
+			int[] x = new int[nx];
 
-		System.out.println("퀵 정렬");
-		System.out.print("요솟수: ");
-		int nx = stdIn.nextInt();
-		int[] x = new int[nx];
+			for (int i = 0; i < nx; i++) {
+				double d = Math.random();
+				x[i] = (int) (d * 20);
+				// System.out.print("x[" + i + "]: ");
+				// x[i] = stdIn.nextInt();
+			}
+			showData(x);
 
-		for (int i = 0; i < nx; i++) {
-			double d = Math.random();
-			x[i] = (int) (d * 20);
-			// System.out.print("x[" + i + "]: ");
-			// x[i] = stdIn.nextInt();
+			quickSort(x, 0, nx - 1); // 배열 x를 퀵정렬
+
+			System.out.println("오름차순으로 정렬했습니다.");
+			showData(x);
 		}
-		showData(x);
-
-		quickSort(x, 0, nx - 1); // 배열 x를 퀵정렬
-
-		System.out.println("오름차순으로 정렬했습니다.");
-		showData(x);
 	}
 }

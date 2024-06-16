@@ -62,7 +62,7 @@
 		<item key="VisibilityModifier" value="1"/>
 	</section>
 	<section name="DialogBounds_OverrideMethodDialog">
-		<item key="DIALOG_X_ORIGIN" value="332"/>
+		<item key="DIALOG_X_ORIGIN" value="318"/>
 		<item key="DIALOG_Y_ORIGIN" value="186"/>
 		<item key="DIALOG_WIDTH" value="539"/>
 		<item key="DIALOG_HEIGHT" value="513"/>
@@ -85,8 +85,8 @@
 		<item key="org.eclipse.jdt.internal.ui.text.JavaOutlineInformationControlDIALOG_USE_PERSISTED_LOCATION" value="false"/>
 	</section>
 	<section name="DialogBounds_GenerateToStringDialog">
-		<item key="DIALOG_X_ORIGIN" value="363"/>
-		<item key="DIALOG_Y_ORIGIN" value="63"/>
+		<item key="DIALOG_X_ORIGIN" value="341"/>
+		<item key="DIALOG_Y_ORIGIN" value="37"/>
 		<item key="DIALOG_WIDTH" value="516"/>
 		<item key="DIALOG_HEIGHT" value="691"/>
 		<item key="DIALOG_FONT_NAME" value="1|맑은 고딕|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|맑은 고딕"/>
