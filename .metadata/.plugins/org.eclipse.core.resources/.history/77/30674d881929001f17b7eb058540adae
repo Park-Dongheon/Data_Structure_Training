@@ -11,7 +11,6 @@ package Chapter5_재귀알고리즘;
 import java.util.ArrayList;
 import java.util.List;
 
-import Chapter5_재귀알고리즘.StackList.EmptyGenericStackException;
 
 //23.2.16 수정
 //23.2.24: 객체 배열 초기화, static 사용, 내부 클래스와 외부 클래스 사용 구분을 못하는 문제 => 선행 학습 필요
@@ -135,7 +134,7 @@ class StackList {
 			throw new EmptyGenericStackException("Stack:: dump - empty");
 		else {
 			for (int i = 0; i < top; i++) // 스택의 인덱스 바닥(0)부터 꼭대기(top) 까지 순회
-				System.out.print(data.get(i) + " "); // 각 인덱스 위치의 data 리스트 요소를 출력
+				System.out.println(data.get(i)); // 각 인덱스 위치의 data 리스트 요소를 출력
 			System.out.println(); // 모든 요소를 출력한 후 줄바꿈
 		}
 	}
@@ -160,7 +159,7 @@ public class 과제8_실습_미로찾기문제 {
 	// 이동 방향을 나타내는 배열
 	static Offsets[] moves = new Offsets[8];// static을 선언하는 이유를 알아야 한다
 
-	public static void path(int[][] maze, int[][] mark, int m, int p) throws EmptyGenericStackException {	// input[12][15] 미로행렬의 행, 열 m = 12, p = 15
+	public static void path(int[][] maze, int[][] mark, int m, int p) throws StackList.EmptyGenericStackException {	// input[12][15] 미로행렬의 행, 열 m = 12, p = 15
 		//출발점 (1,1), 이동 방향 dir = 2(2는 동쪽) 을 스택에 push
 		//initialize stack to the maze entrance coordinates and direction east;
 		mark[1][1] = 1;
@@ -179,43 +178,50 @@ public class 과제8_실습_미로찾기문제 {
 			int i = tmp.x;
 			int j = tmp.y;
 			int d = tmp.dir;
-			mark[i][j] = 1;//backtracking 경로 1로 표시
+			mark[i][j] = 1;//backtracking 경로 1로 표시, 이미 지나간 위치
 			
 			while (d < 8) {// moves forward, 이동 가능한 8 가지 모든 방향 탐색
-				// outFile << i << " " << j << " " << d << endl;
-				tmp.toString();
-//				System.out.println("(" + i + ", " + j + ", " + d + ")");
 				// (g,h) = coordinates of next move, 현재 위치 (i,j)에 대하여 이동 방향 계산
 				int g = i + moves[d].a;
 				int h = j + moves[d].b;
-				if ((g == m) && (h == p)) { // reached exit, 출구 도달 시
-					// output path
-					System.out.println("Success in Finding the Path");
-					//(i,j)와 (g,h)에 대하여 mark 표시
-					mark[g][h] = 1;	// 경로 마킹
-					return;
-				}
-				// 새로운 위치로 이동할 수 있는 경우, maze[g][h]에서 이동이 가능하고, mark[g][h]가 표시된 적인 없는 경우
-				if ((maze[g][h] == 0) && (mark[g][h]) == 0) { // new position
-					// push the old temp to the stack, but the direction changes.
-					// Because the neighbor in the direction of d has been checked.
-					mark[g][h] = 1;		// 경로 마킹
-					temp = new Items(i, j, d + 1);
-					st.push(temp);
-					i = g;
-					j = h;
-					d = 0;
+				
+				// 경계 조건 확인 
+				if (g >= 1 && g <= m && h >= 1 && h <= p) {
+					if ((g == m) && (h == p)) { // reached exit, 출구 도달 시
+						// output path
+						System.out.println("\n스택에 저장된 배열의 좌표와 방향값 표시 : ");
+						st.dump();
+						System.out.println("Success in Finding the Path");
+                        System.out.println("The path is (g, h) : " + g + " " + h + " ");
+						//(i,j)와 (g,h)에 대하여 mark 표시
+						mark[g][h] = 1;	// 경로 마킹
+						return;
+					}
+					
+					// 새로운 위치로 이동할 수 있는 경우, maze[g][h]에서 이동이 가능하고, mark[g][h]가 표시된 적인 없는 경우
+					if (maze[g][h] == 0 && mark[g][h] != 2) { // new position
+						// push the old temp to the stack, but the direction changes.
+						// Because the neighbor in the direction of d has been checked.
+						mark[g][h] = 2;		// 경로 마킹, 미로 찾기 궤적은 2로 표시, 지나간 자리
+						temp = new Items(i, j, d + 1);
+						st.push(temp);
+						i = g;
+						j = h;
+						d = 0;	//reset direction to North
+						
+					} else {
+						// try next direction, 다음 방향으로 전환
+						d++;
+					}
 				} else {
-					// try next direction
 					d++;
 				}
-				// (i, j) 현위치에 대한 mark를 취소
 			}
 		}
 		System.out.println("no path in maze ");	
 	}
 
-	public static void main(String[] args) throws EmptyGenericStackException {
+	public static void main(String[] args) throws StackList.EmptyGenericStackException {
 		// 미로와 마킹 배열 생성
 		int[][] maze = new int[14][17];	// 울타리를 친 데이터:  input[] -> maze[]
 		int[][] mark = new int[14][17];
@@ -238,7 +244,7 @@ public class 과제8_실습_미로찾기문제 {
 		
 		// 이동할 수 있는 방향 초기화
 		for (int ia = 0; ia < 8; ia++)
-			moves[ia] = new Offsets(0, 0);// 배열에 offsets 객체를 치환해야 한다
+			moves[ia] = new Offsets(0, 0);		// 배열에 offsets 객체를 치환해야 한다
 		moves[0].a = -1;	moves[0].b = 0;		// N  북
 		moves[1].a = -1;	moves[1].b = 1;		// NE 북동
 		moves[2].a = 0;		moves[2].b = 1;		// E  동
@@ -247,9 +253,6 @@ public class 과제8_실습_미로찾기문제 {
 		moves[5].a = 1;		moves[5].b = -1;	// SW 남서
 		moves[6].a = 0;		moves[6].b = -1;	// W  서
 		moves[7].a = -1;	moves[7].b = -1;	// NW 북서
-//		Directions d;
-//		d = Directions.N; 	
-//		 d = d + 1;//java는 지원안됨
 		
 		// 미로 데이터를 maze 배열에 복사 및 울타리 설정
 		for (int i = 0; i < 14; i++) {
@@ -257,7 +260,7 @@ public class 과제8_실습_미로찾기문제 {
 				if (i == 0 || i == 13 || j == 0 || j == 16) {
 					maze[i][j] = 1;		// 울타리 설정
 				}
-				else if (i <= 12 && j <= 15) {
+				else if (i < 13 && j < 16) {
 					maze[i][j] = input[i - 1][j - 1];
 				}
 			}
@@ -265,30 +268,30 @@ public class 과제8_실습_미로찾기문제 {
 		
 		// 미로 출력
 		System.out.println("maze[12,15]::");
-		for (int i = 0; i <= 13; i++) {
-			for (int j = 0; j <= 16; j++) {
+		for (int i = 0; i < 14; i++) {
+			for (int j = 0; j < 17; j++) {
 				System.out.print(maze[i][j] + " ");
 			}
 			System.out.println();
 		}
 		
-		// 마킹 배열 초기화 및 미로 찾기 알고리즘 호출
-		System.out.println("mark::");
-		for (int i = 0; i <= 13; i++) {
-			for (int j = 0; j <= 16; j++) {
+		// 초기 마킹 배열
+		System.out.println("\nmark:: 마킹 배열 초기화");
+		for (int i = 0; i < 14; i++) {
+			for (int j = 0; j < 17; j++) {
 				System.out.print(mark[i][j] + " ");
-				maze[i][j] = 0;
 			}
 			System.out.println();
 		}
 		
 		// 출구까지 경로 탐색
+		System.out.print("\n미로찾기 경로는?");
 		path(maze, mark, 12, 15);	// 출구 path() 메서드 호출
 		
 		// 마킹된 경로 출력
-		System.out.println("mark::");	
-		for (int i = 1; i <= 12; i++) {
-			for (int j = 1; j <= 15; j++) {
+		System.out.println("\nmark:: 미로 찾기 알고리즘 호출 후 마킹 배열");	
+		for (int i = 0; i < 14; i++) {
+			for (int j = 0; j < 17; j++) {
 				System.out.print(mark[i][j] + " ");
 			}
 			System.out.println();

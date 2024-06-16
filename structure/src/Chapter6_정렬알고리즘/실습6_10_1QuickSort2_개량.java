@@ -30,7 +30,7 @@ class Point {
 
 	@Override
 	public String toString() {
-		return "Point : (" + ix + ", " + iy + ")";
+		return "<" + ix + ", " + iy + ">";
 	}
 
 }
@@ -103,6 +103,7 @@ public class 실습6_10_1QuickSort2_개량 {
 					pr--;
 				if (pl <= pr)
 					swap(a, pl++, pr--);
+
 			} while (pl <= pr);
 			System.out.println();
 			System.out.println("left = " + left + ", " + "right = " + right);

@@ -29,7 +29,7 @@ public class 실습6_12_1MergeSort정수 {
 	static void MergeSort(int[] a, int left, int right) {
 		int mid = (left+right)/2;
 		if (left == right) return;
-		MergeSort(a, left, mid);
+		MergeSort(a, left, mid);			// 병합 정렬(재귀 호출)
 		MergeSort(a, mid+1, right);
 		merge(a, left, mid, mid+1, right);
 		return;

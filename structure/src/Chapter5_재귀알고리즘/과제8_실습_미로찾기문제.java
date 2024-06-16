@@ -199,7 +199,7 @@ public class 과제8_실습_미로찾기문제 {
 					}
 					
 					// 새로운 위치로 이동할 수 있는 경우, maze[g][h]에서 이동이 가능하고, mark[g][h]가 표시된 적인 없는 경우
-					if (maze[g][h] == 0 && mark[g][h] != 2) { // new position
+					if (maze[g][h] == 0 && mark[g][h] == 0) { // new position
 						// push the old temp to the stack, but the direction changes.
 						// Because the neighbor in the direction of d has been checked.
 						mark[g][h] = 2;		// 경로 마킹, 미로 찾기 궤적은 2로 표시, 지나간 자리

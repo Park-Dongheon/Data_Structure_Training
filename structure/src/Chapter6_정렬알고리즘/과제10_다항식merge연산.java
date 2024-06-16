@@ -1,7 +1,12 @@
 package Chapter6_정렬알고리즘;
 
+<<<<<<< HEAD
 class Polynomial implements Comparable<Polynomial>{
 	double coef;           // 계수
+=======
+class Term implements Comparable<Term>{
+    double coef;           // 계수
+>>>>>>> 3e18cfad28a97a9bb1fbfe9ca155806f33f2219e
     int    exp;            // 지수
 
     public Polynomial(double coef, int exp) {
@@ -23,6 +28,7 @@ class Polynomial implements Comparable<Polynomial>{
 }
 public class 과제10_다항식merge연산 {
 
+<<<<<<< HEAD
 	static void merge(Polynomial[] a, int lefta, int righta, int leftb, int rightb ) {
 		int size = rightb - lefta + 1;
 		
@@ -56,32 +62,50 @@ public class 과제10_다항식merge연산 {
 		MergeSort(a, left, mid);			// 왼쪽 부분 배열 정렬
 		MergeSort(a, mid+1, right);			// 오른쪽 부분 배열 정렬
 		merge(a, left, mid, mid+1, right);	// 정렬된 두 부분 배열 mertge 병합
+=======
+	static void merge(Term[] a, int lefta, int righta, int leftb, int rightb ) {
+
+	}
+
+	// --- 퀵 정렬(비재귀 버전)---//
+	static void MergeSort(Term[] a, int left, int right) {
+		int mid = (left+right)/2;
+		if (left == right) return;
+		MergeSort(a, left, mid);
+		MergeSort(a, mid+1, right);
+		merge(a, left, mid, mid+1, right);
+		return;
+>>>>>>> 3e18cfad28a97a9bb1fbfe9ca155806f33f2219e
 	}
 
 	public static void main(String[] args) {
-		Polynomial[] x = {
-		         new Polynomial(1.5, 3),
-		         new Polynomial(2.5, 7),
-		         new Polynomial(3.3, 2),
-		         new Polynomial(4.0, 1),
-		         new Polynomial(2.2, 0),
-		         new Polynomial(3.1, 4),
-		         new Polynomial(3.8, 5),
+		Term[] polynomialX = {
+		         new Term(1.5, 3),
+		         new Term(2.5, 7),
+		         new Term(3.3, 2),
+		         new Term(4.0, 1),
+		         new Term(2.2, 0),
+		         new Term(3.1, 4),
+		         new Term(3.8, 5),
 		     };
-		Polynomial[] y = {
-		         new Polynomial(1.5, 1),
-		         new Polynomial(2.5, 2),
-		         new Polynomial(3.3, 3),
-		         new Polynomial(4.0, 0),
-		         new Polynomial(2.2, 4),
-		         new Polynomial(3.1, 5),
-		         new Polynomial(3.8, 6),
+		Term[] polynomialY = {
+		         new Term(1.5, 1),
+		         new Term(2.5, 2),
+		         new Term(3.3, 3),
+		         new Term(4.0, 0),
+		         new Term(2.2, 4),
+		         new Term(3.1, 5),
+		         new Term(3.8, 6),
 		     };
 		
 		// 배열의 원소 개수
 		int nx = x.length;
 
+<<<<<<< HEAD
 		// 초기 다항식 출력
+=======
+		// ex) f(x) = 5x**3  + 4x**2
+>>>>>>> 3e18cfad28a97a9bb1fbfe9ca155806f33f2219e
 		ShowPolynomial(x);
 		ShowPolynomial(y);
 		
@@ -92,9 +116,13 @@ public class 과제10_다항식merge연산 {
 		// 정렬된 다항식 출력
 		ShowPolynomial(x);
 		ShowPolynomial(y);
+<<<<<<< HEAD
 		
 		// 덧셈과 곱셈 결과를 저장할 배열
 		Polynomial[] z = new Polynomial[20];
+=======
+		Term[] polynomialZ = new Term[20];
+>>>>>>> 3e18cfad28a97a9bb1fbfe9ca155806f33f2219e
 		AddPolynomial(x,y,z);//다항식 덧셈 z = x + y
 		ShowPolynomial(z);
 		ShowPolynomial(y);
