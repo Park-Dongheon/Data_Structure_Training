@@ -20,39 +20,56 @@ class LinkedList1 {
 	public LinkedList1() {
 		first = null;
 	}
-
-	public boolean Delete(int element) // 전달된 element 값이 존재 하면 삭제하고 true로 리턴
-	{
-		Node1 q, current = first;
-		q = current; // q.list -> first
-		
-		if (current == null) {
-			return false;
-		}
-		
-		while (q != null) {
-			if(q.data == element) {
-				q = q.link;
-				q.link = current;
-				return true;
-			}
-		}
-		return false;
-	}
-
+	
 	public void Show() { // 전체 리스트를 순서대로 출력한다.
 		Node1 p = first;
 		int num = 0;
-
+		
 		while (p != null) {
 			System.out.print(p.data + " -> ");
 			p = p.link;
 			if (p == null)  {
-				System.out.println("리스트 끝");
+				System.out.println("리스트 끝\n");
 			}
 		}
-
+		
 	}
+
+	public boolean Delete(int element) // 전달된 element 값이 존재 하면 삭제하고 true로 리턴
+	{
+		Node1 q, current = first;
+		// current는 리스트의 첫 번째 노드를 가리킴
+		q = current;
+		
+		// 현재 정의된 first 리스트가 존재하지 않을 경우 
+		if (current == null) {
+			System.out.println("리스트가 존재하지 않습니다.");
+			return false;
+		}
+		
+		// 현재 정의된 first 리스트의 첫번째 데이터가 삭제하고자 하는 element 인 경우
+		if (current.data == element) {
+			// 첫 번째 노드를 삭제하고 리스트의 링크를 다음 노드로 변경,  true 를 반환 
+			first = current.link;
+			return true;
+		}
+		
+		// q 링크의 데이터, 즉 다음 리스트가 null 이 아니고, q 링크의 데이터, 즉 다음 리스트의 데이터가 삭제하고자 하는 element 가 아닌 경우 
+		while (q.link != null && q.link.data != element) {
+			// 현재 리스트 q 에 q 링크를 저장
+			q = q.link;
+		}
+		
+		// q 링크의 데이터, 즉 다음 리스트가 null 이 아니고, q 링크의 데이터, 즉 다음 리스트의 데이터가 삭제하고자 하는 element 일 경우
+		while (q.link != null && q.link.data == element) {
+			// q 가 가리키는 link 에 다음 리스트의 링크 데이터가 저장되고 true 를 반환
+			q.link = q.link.link;
+			return true;
+		}
+		
+		return false;
+	}
+
 
 	public void Add(int element) // 임의 값을 삽입할 때 리스트가 오름차순으로 정렬이 되도록 한다
 	{
@@ -103,7 +120,7 @@ class LinkedList1 {
 		return false;
 	}
 
-	void Merge(LinkedList1 b) {
+	void Merge(LinkedList1 list) {
 		/*
 		 * 연결리스트 a,b에 대하여 a = a + b merge하는 알고리즘 구현으로 in-place 방식으로 합병/이것은 새로운 노드를 만들지
 		 * 않고 합병하는 알고리즘 구현 난이도 등급: 최상 a = (3, 5, 7), b = (2,4,8,9)이면 a = (2,3,4,5,8,9)가
@@ -112,12 +129,30 @@ class LinkedList1 {
 
 		// a -> 3 - 5 - 7 / b -> 2 - 4 -8 - 9 merge(a, b) = a -> 2 - 3 - 4 - 5 - 6 - 7 -
 		// 8 - 9
-
+		Node1 head = new Node1(0);
+		Node1 a = this.first;
+		Node1 b = list.first;;
+		
+		while (a != null && b != null) {
+			if (a.data <= b.data) {
+				head.link = a;
+				a = a.link;
+			}
+			else {
+				head.link = b;
+				b = b.link;
+			}
+			head = head.link;
+		}
+		
+		if (a != null)
+		
 	}
 
 }
 
 public class 실습9_1정수연결리스트 {
+	
 	enum Menu {
 		Add("삽입"), Delete("삭제"), Show("인쇄"), Search("검색"), Merge("합병"), Exit("종료");
 
@@ -165,7 +200,9 @@ public class 실습9_1정수연결리스트 {
 		Random rand = new Random();
 		LinkedList1 l = new LinkedList1();
 		Scanner sc = new Scanner(System.in);
-		int count = 10; // 난수 생성 갯수
+		System.out.println("추가할 난수 숫자 개수::");
+		int count = sc.nextInt(); //난수 생성 갯수
+		
 		int data = 0;
 		do {
 			switch (menu = SelectMenu()) {// Menu 생성자 호출 - menu 객체를 리턴한다
@@ -186,6 +223,7 @@ public class 실습9_1정수연결리스트 {
 				break;
 			case Search: // 입력 숫자 n을 검색한다.
 				int n = sc.nextInt();
+				System.out.println("검색할 값을 입력: ");
 				boolean result = l.Search(n);
 				if (!result)
 					System.out.println("검색 값 = " + n + " 데이터가 없습니다.");
@@ -197,7 +235,9 @@ public class 실습9_1정수연결리스트 {
 				for (int i = 0; i < count; i++) {
 					data = rand.nextInt(20);
 					l2.Add(data);
+					
 				}
+				l2.Show();
 				l.Merge(l2);// merge 실행후 show로 결과 확인 - 새로운 노드를 만들지 않고 합병 - 난이도 상
 				break;
 			case Exit: // 꼬리 노드 삭제

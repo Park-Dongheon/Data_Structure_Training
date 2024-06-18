@@ -85,6 +85,7 @@ public class 과제10_다항식merge연산 {
 
 		// 초기 다항식 출력
 		// ex) f(x) = 5x**3  + 4x**2
+		System.out.println("-----------------초기다항식 배열-----------------");
 		ShowPolynomial(termX);
 		ShowPolynomial(termY);
 		
@@ -93,6 +94,7 @@ public class 과제10_다항식merge연산 {
 		MergeSort(termY, 0, termY.length - 1); // 배열 x를 퀵정렬
 		
 		// 정렬된 다항식 출력
+		System.out.println("-----------------정렬된 다항식 배열------------------");
 		ShowPolynomial(termX);
 		ShowPolynomial(termY);
 		
@@ -100,8 +102,9 @@ public class 과제10_다항식merge연산 {
 		Term[] termZ = new Term[20];
 		
 		// 다항식 덧셈 z = x + y
+		System.out.println("-----------------다항식 덧셈------------------");
 		AddPolynomial(termX, termY, termZ);
-		ShowPolynomial(termZ);
+		ShowPolynomial(termY);
 		
 		// 다항식 곱셈 z = x * y
 		MultiplyPolynomial(termX, termY, termZ);
@@ -125,11 +128,24 @@ public class 과제10_다항식merge연산 {
 		while (i < x.length && j < y.length) {
 			if (x[i] == null && y[j] == null) break;
 			
-			if (x[i].compareTo(y[j]) < 0)
-				z[k++] = x[i];
-			else if (x[i].compareTo(y[j]) > 0 )
-				
-			
+			if (x[i] == null || (y[j] != null && y[j].compareTo(x[i]) < 0))
+				z[k++] = y[j++];
+			else if (y[i] == null || (x[j] != null && x[i].compareTo(y[j]) < 0))
+				z[k++] = x[i++];
+			else {
+				z[k] = new Term(x[i].coef + y[j].coef, x[i].exp);
+				i++;
+				j++;
+				k++;
+			}
+		}
+		
+		while (i < x.length) {
+			z[k++] = x[i++];
+		}
+		
+		while (j < y.length) {
+			z[k++] = x[j++];
 		}
 		
 	}
@@ -139,6 +155,7 @@ public class 과제10_다항식merge연산 {
 	}
 
 	static int EvaluatePolynomial(Term[] z, int x) {
+		int result = 0;
 		return result;
 	}
 	
