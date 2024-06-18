@@ -1,0 +1,199 @@
+package Chapter6_정렬알고리즘;
+
+class Term implements Comparable<Term>{
+    double coef;           // 계수
+    int    exp;            // 지수
+
+    public Term(double coef, int exp) {
+    	this.coef = coef;
+    	this.exp = exp;
+    }
+
+	@Override
+	public int compareTo(Term p) {
+		// 지수를 기준으로 비교
+		return Integer.compare(this.exp, p.exp);
+	}
+
+	@Override
+	public String toString() {
+		return "Polynomial (coef=" + coef + ", exp=" + exp + ")";
+	}
+
+}
+public class 과제10_다항식merge연산 {
+	static void merge(Term[] a, int lefta, int righta, int leftb, int rightb ) {
+		int size = rightb - lefta + 1;
+		
+		Term[] temp = new Term[size];
+		
+		int i = lefta, j = leftb, k = 0;
+		
+		while (i <= righta && j <= rightb) {
+			if (a[i].compareTo(a[j]) <= 0) {
+				temp[k++] = a[i++];
+			} else {
+				temp[k++] = a[j++];
+			}
+		}
+		
+		while (i <= righta) 
+			temp[k++] = a[i++];
+		
+		while (j <= rightb)
+			temp[k++] = a[j++];
+		
+		for (i = 0; i < size; i++)
+			a[lefta + i] = temp[i];
+		
+	}
+
+	// --- 퀵 정렬(비재귀 버전)---//
+	static void MergeSort(Term[] a, int left, int right) {
+		int mid = (left+right)/2;			// 중간 인덱스 계산
+		if (left == right) return;			// 배열이 하나의 원소만 남으면 정렬 종료
+		MergeSort(a, left, mid);			// 왼쪽 부분 배열 정렬
+		MergeSort(a, mid+1, right);			// 오른쪽 부분 배열 정렬
+		merge(a, left, mid, mid+1, right);	// 정렬된 두 부분 배열 mertge 병합
+		return;
+	}
+
+	public static void main(String[] args) {
+		Term[] termX = {
+		         new Term(1.5, 3),
+		         new Term(2.5, 7),
+		         new Term(3.3, 2),
+		         new Term(4.0, 1),
+		         new Term(2.2, 0),
+		         new Term(3.1, 4),
+		         new Term(3.8, 5),
+		     };
+		Term[] termY = {
+		         new Term(1.5, 1),
+		         new Term(2.5, 2),
+		         new Term(3.3, 3),
+		         new Term(4.0, 0),
+		         new Term(2.2, 4),
+		         new Term(3.1, 5),
+		         new Term(3.8, 6),
+		     };
+		
+		// 배열의 원소 개수
+		int nx = termX.length;
+		int ny = termY.length;
+
+
+		// 초기 다항식 출력
+		// ex) f(x) = 5x**3  + 4x**2
+		System.out.println("----------------------------초기다항식 배열-----------------------------");
+		ShowPolynomial(termX);
+		ShowPolynomial(termY);
+		
+		// 다항식 배열 정렬
+		MergeSort(termX, 0, termX.length - 1); // 배열 x를 퀵정렬
+		MergeSort(termY, 0, termY.length - 1); // 배열 x를 퀵정렬
+		
+		// 정렬된 다항식 출력
+		System.out.println("---------------------------정렬된 다항식 배열---------------------------");
+		ShowPolynomial(termX);
+		ShowPolynomial(termY);
+		
+		// 덧셈과 곱셈 결과를 저장할 배열
+		Term[] termZ = new Term[20];
+		
+		// 다항식 덧셈 z = x + y
+		System.out.println("------------------------------다항식 덧셈-------------------------------");
+		AddPolynomial(termX, termY, termZ);
+		ShowPolynomial(termZ);
+		
+		// 다항식 곱셈 z = x * y
+		System.out.println("------------------------------다항식 곱셈-------------------------------");
+		MultiplyPolynomial(termX, termY, termZ);
+		ShowPolynomial(termZ);
+		
+		//다항식 값 계산 함수 z(10) 값 계산한다
+		int result = EvaluatePolynomial(termZ, 10); 
+		System.out.println(" result = " + result );
+	}
+
+	static void ShowPolynomial(Term[] x) {
+		for (Term p : x)
+			if (p != null)
+				System.out.print(p + " ");
+		System.out.println();
+	}
+
+	static void AddPolynomial(Term[] x, Term[] y, Term[] z) {
+		int i = 0, j = 0, k = 0;
+		
+		while (i < x.length && j < y.length) {
+			if (x[i] == null && y[j] == null) break;
+			
+			if (x[i] == null || (y[j] != null && y[j].compareTo(x[i]) < 0))
+				z[k++] = y[j++];
+			else if (y[i] == null || (x[j] != null && x[i].compareTo(y[j]) < 0))
+				z[k++] = x[i++];
+			else {
+				z[k] = new Term(x[i].coef + y[j].coef, x[i].exp);
+				i++;
+				j++;
+				k++;
+			}
+		}
+		
+		while (i < x.length && x[i] != null) {
+			z[k++] = x[i++];
+		}
+		
+		while (j < y.length && y[j] != null) {
+			z[k++] = y[j++];
+		}
+		
+	}
+	
+	// 다항식 곱셈 메서드
+	static void MultiplyPolynomial(Term[] x, Term[] y, Term[] z) {
+		// z 배열 초기화
+		for (int i = 0; i < z.length; i++) 
+			z[i] = null;
+		
+		// x와 y 배열의 모든 항을 곱
+		for (int i = 0; i < x.length; i++) {
+			if (x[i] == null) continue;
+			for (int j = 0; j < y.length; j++) {
+				if (y[j] == null) continue;
+				
+				int exp = x[i].exp + y[j].exp;			// 지수 더하기
+				double coef = x[i].coef * y[j].coef;		// 계수 곱하기
+						
+				boolean found = false;
+				// z 배열에서 동일한 지수 찾기
+				for (int k = 0; k < z.length; k++) {
+					if (z[k] != null && z[k].exp == exp) {
+						z[k].coef += coef;		// 동일한 지수가 있으면 계수를 더함
+						found = true;
+						break;
+					}
+				}
+				
+				// 동일한 지수가 없으면 새로운 항을 추가
+				if (!found) {
+					for (int k = 0; k < z.length; k++) {
+						if (z[k] == null) {
+							z[k] = new Term(coef, exp);		// 새로운 항을 추가
+							break;
+						}
+					}
+				}
+				
+			}
+		}
+		
+	}
+
+	static int EvaluatePolynomial(Term[] z, int x) {
+		int result = 0;
+		return result;
+	}
+	
+}
