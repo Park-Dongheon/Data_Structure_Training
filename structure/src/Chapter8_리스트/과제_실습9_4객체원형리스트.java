@@ -17,7 +17,7 @@ class SimpleObject3 {
 
 	private String no; 				// 회원번호
 	private String name; 			// 이름
-	private String expire;					// 유효기간 필드를 추가
+	private String expire;			// 유효기간 필드를 추가
 	
 	// --- 문자열 표현을 반환 ---//
 	public String toString() {
@@ -49,6 +49,10 @@ class SimpleObject3 {
 			System.out.print("이름: ");
 			name = sc.next();
 		}
+		if ((sw & EXPIRE) == EXPIRE) {
+			System.out.print("유효기간: ");
+			expire = sc.next();
+		}
 	}
 
 	// --- 회원번호로 순서를 매기는 comparator ---//
@@ -59,6 +63,7 @@ class SimpleObject3 {
 			int num1 = Integer.parseInt(d1.no);
 			int num2 = Integer.parseInt(d2.no);
 			return (num1 > num2) ? 1 : (num1 < num2) ? -1 : 0;
+		//  return Integer.compare(num1, num2);	
 		}
 	}
 
@@ -79,6 +84,7 @@ class SimpleObject3 {
 			int exp1 = Integer.parseInt(d1.expire);
 			int exp2 = Integer.parseInt(d2.expire);
 			return (exp1 > exp2) ? 1 : (exp1 < exp2) ? -1 : 0;
+		//	return Integer.compare(exp1, exp2);
 		}
 	}	
 	
@@ -115,63 +121,107 @@ class CircularList {
 	
 	public int Delete(SimpleObject3 element, Comparator<SimpleObject3> cc) // delete the element
 	{
+		// q와 current 노드를 선언하고, current 는 첫 번째 데이터 노드를 가리키도록 초기화
 		Node3 q, current = first.link;
+		// q 도 current 와 같은 노드를 가리킴
 		q = current;
-
-		return -1;// 삭제할 대상이 없다.
-	}
-
-	public void Show() { // 전체 리스트를 순서대로 출력한다.
-		Node3 p = first.link;
-		SimpleObject3 so;
-		while (p != null) {
-			so = first.data;
-			System.out.print(so + " -> ");
-			if (p == null) {
-				System.out.println("회원이 없습니다. \n");
-			}
+		
+		// 리스트가 비어 있는지 확인 (첫 노드가 자기 자신을 가리키는 경우)
+		if (current == first) {
+			System.out.println("회원이 존재하지 않습니다.");
+			return -1;
 		}
+		
+		// 첫 번째 데이터 노드를 삭제하는 경우
+		if (cc.compare(current.data, element) == 0) {
+			// 삭제할 노드의 링크를 첫 번째 노드의 링크로 연결
+			first.link = current.link;
+			return 1;
+		}
+		
+		// 삭제할 노드를 찾는 반복문
+		while (current != first) {
+			if (cc.compare(q.data, element) == 0) {
+				// q 를 다음 노드로 이동시킴 (삭제할 노드를 건너뛰기 위함)
+				q = current.link;
+				return 1;
+			}
+			// 첫 번째 노드를 current 로 설정
+			first = current;
+			// current 를 다음 노드로 이동
+			current = current.link;
+		}	
 
+		return -1;		// 삭제할 대상을 찾지 못한 경우
 	}
+
 
 	public void Add(SimpleObject3 element, Comparator<SimpleObject3> cc) // 임의 값을 삽입할 때 리스트가 오름차순으로 정렬이 되도록 한다
 	{
+		// 새 노드 생성
 		Node3 newNode = new Node3(element);
 		
-		if (first == null) 
+		// 리스트가 비어 있는 경우, 리스트에 새 노드를 추가하고 메서드를 종료
+		if (first.link == first) 
 		{
-			first = newNode;
+			// 새 노드의 링크를 첫 노드로 설정
+			newNode.link = first;
+			// 첫 노드의 링크를 새 노드로 설정
+			first.link = newNode;
 			return;
 		}
 		
-		Node3 p = first, q = null;
+		Node3 p = first.link;		// 현재 노드 (탐색용)
+		Node3 q = first;			// 이전 노드 (탐색용)
 		
-		while (p != null) {
-			if (cc.compare(p.data, element) < 0) {
-				q = p;
-				p = p.link;
-			} else {
-				if (q == null) {
-					newNode.link = p;
-					first = newNode;
-					return;
-				} else {
-					q.link = newNode;
-					newNode.link = p;
-					return;
-				}
+		// 리스트의 처음으로 돌아올 때까지 반복, Insert 할 위치를 찾음
+		while (p != first) {
+			// 현재 노드의 데이터가 새 노드의 데이터보다 큰 경우
+			if (cc.compare(p.data, element) > 0) {
+				// 위치를 찾았으므로 반복문 탈출
+				break;
+			}
+			// 이전 노드를 현재 노드로 설정
+			q = p;
+			// 다음 노드로 이동
+			p = p.link; 
+		}
+		
+		// 새 노드를 리스트에 삽입
+		// 새 노드의 링크를 현재 노드로 설정
+		newNode.link = p;
+		// 이전 노드의 링크를 새노드로 설정
+		q.link = newNode;
+
+	}
+	
+	public void Show() { // 전체 리스트를 순서대로 출력한다.
+		Node3 p = first.link;
+		SimpleObject3 so;
+		while (p != first) {
+			so = p.data;
+			System.out.print(so + " -> ");
+			p = p.link;
+			if (p == first) {
+				System.out.println("회원이 없습니다. \n");
+				break;
 			}
 		}
 		
- 		if (q != null) {
- 			q.link = newNode;
- 		}
-
+		System.out.println();
 	}
 
 	public boolean Search(SimpleObject3 element, Comparator<SimpleObject3> cc) { // 전체 리스트를 순서대로 출력한다.
 		Node3 q, current = first.link;
-
+		q = current;
+		while (q != null) {
+			if (cc.compare(q.data, element) == 0) {
+				System.out.println("회원 정보: " + q.data);
+				return true;
+			}
+			
+			q = q.link;
+		}
 		return false;
 	}
 
@@ -241,7 +291,7 @@ public class 과제_실습9_4객체원형리스트 {
 				data = new SimpleObject3();
 				data.scanData("삭제", SimpleObject3.NO);
 				int num = l.Delete(data, SimpleObject3.NO_ORDER);
-				System.out.println("삭제된 데이터 성공은 " + num);
+				System.out.println("삭제된 데이터 성공은 " + num + "\n");
 				break;
 			case Show:
 				l.Show();
@@ -251,9 +301,9 @@ public class 과제_실습9_4객체원형리스트 {
 				data.scanData("탐색", SimpleObject3.NO);
 				boolean result = l.Search(data, SimpleObject3.NO_ORDER);
 				if (result)
-					System.out.println("검색 성공 = " + result);
+					System.out.println("검색 성공 = " + result + "\n");
 				else
-					System.out.println("검색 실패 = " + result);
+					System.out.println("검색 실패 = " + result + "\n");
 				break;
 			case Merge:
 				for (int i = 0; i < count; i++) {// 3개의 객체를 연속으로 입력받아 l2 객체를 만든다
@@ -272,6 +322,8 @@ public class 과제_실습9_4객체원형리스트 {
 			case Exit: // 꼬리 노드 삭제
 				break;
 			}
-		} while (menu != Menu.Exit);
+		} while (menu != Menu.Exit);	
+		sc.close();
 	}
+	
 }
