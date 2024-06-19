@@ -135,7 +135,7 @@ class LinkedList1 {
 		// 첫 번째 리스트의 현재 노드를 가리킴
 		Node1 a = first;	
 		// 두 번째 리스트의 현재 노드를 가리킴
-		Node1 b = list.first;;
+		Node1 b = list.first;
 		// a1 : 첫 번째 리스트에서 현재 노드의 이전 노드를 가리킴
 		// b1 : 두 번째 리스트에서 현재 노드의 이전 노드를 가리킴 (병합 과정에서 사용)
 		Node1 a1 = null, b1 = null;
