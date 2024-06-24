@@ -315,31 +315,30 @@ class Tree5 {
 	void levelOrder() // level 별로 출력한다. level이 증가하면 다음줄에 출력한다
 	// 난이도: 최상급 구현
 	{
-	    if (root == null)
-	        return;
-
+		if (root == null)
+			return;
+		
 	    ObjectQueue5 q = new ObjectQueue5(20);
 	    q.enque(root);
+	    q.enque(null); // 레벨 구분을 위해 null 삽입
 
 	    while (!q.isEmpty()) {
-	        int levelSize = q.size(); // 현재 레벨의 노드 개수를 저장
-
-	        for (int i = 0; i < levelSize; i++) {
-	            TreeNode5 node = q.deque();
-
-	            // 현재 노드 출력
+	        TreeNode5 node = q.deque();
+	        
+	        if (node != null) {
 	            System.out.print(node.data + " ");
 
-	            // 자식 노드가 있는 경우 큐에 추가
 	            if (node.LeftChild != null)
 	                q.enque(node.LeftChild);
 
 	            if (node.RightChild != null)
 	                q.enque(node.RightChild);
+	        } else {
+	            System.out.println(); // 레벨이 끝나면 줄바꿈
+	            
+	            if (!q.isEmpty())
+	                q.enque(null); // 다음 레벨 구분을 위해 null 삽입
 	        }
-
-	        // 레벨 구분을 위해 줄바꿈
-	        System.out.println();
 	    }
 	}
 
