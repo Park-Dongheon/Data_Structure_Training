@@ -1,0 +1,575 @@
+package Chapter9_트리;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Scanner;
+
+class TreeNode5 {
+	TreeNode5 LeftChild;
+	int data;
+	TreeNode5 RightChild;
+
+	public TreeNode5() {
+		LeftChild = RightChild = null;
+	}
+}
+
+class ObjectStack5 {
+	// --- 실행시 예외: 스택이 비어있음 ---//
+	// generic class는 Throwable을 상속받을 수 없다 - 지원하지 않는다
+	public class EmptyGenericStackException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		public EmptyGenericStackException() {
+			super();
+		}
+	}
+
+	// --- 실행시 예외: 스택이 가득 참 ---//
+	public class OverflowGenericStackException extends RuntimeException {
+		public OverflowGenericStackException() {
+		}
+	}
+
+	private List<TreeNode5> data; // list를 사용: 배열은 크기를 2배로 늘리는 작업 필요
+	// private List<T> data;
+	private int capacity; // 스택의 크기
+	private int top; // 스택 포인터
+
+//--- 생성자(constructor) ---//
+	public ObjectStack5(int capacity) {
+		top = 0;
+		this.capacity = capacity;
+		// this.data = new T[capacity]; // 스택 본체용 배열을 생성
+		try {
+			data = new ArrayList<>(capacity);
+		} catch (OutOfMemoryError e) {
+			capacity = 0;
+		}
+	}
+
+//--- 스택에 x를 푸시 ---//
+	public boolean push(TreeNode5 x) throws OverflowGenericStackException {
+		System.out.println("top = " + top + ", apacity = " + capacity);
+		if (top >= capacity)
+			throw new OverflowGenericStackException();
+		top++;
+		return data.add(x);
+
+	}
+
+//--- 스택에서 데이터를 팝(정상에 있는 데이터를 꺼냄) ---//
+	public TreeNode5 pop() throws EmptyGenericStackException {
+		if (top < 0)
+			throw new EmptyGenericStackException();
+		return data.remove(--top);
+	}
+
+//--- 스택에서 데이터를 피크(peek, 정상에 있는 데이터를 들여다봄) ---//
+	public TreeNode5 peek() throws EmptyGenericStackException {
+		if (top <= 0)
+			throw new EmptyGenericStackException();
+		return data.get(top - 1);
+	}
+
+//--- 스택을 비움 ---//
+	public void clear() {
+		top = 0;
+	}
+
+//--- 스택에서 x를 찾아 인덱스(없으면 –1)를 반환 ---//
+	public int indexOf(TreeNode5 x) {
+		for (int i = top - 1; i >= 0; i--) // 꼭대기 쪽부터 선형 검색
+			if (data.get(i).equals(x))
+				return i; // 검색 성공
+		return -1; // 검색 실패
+	}
+
+//--- 스택의 크기를 반환 ---//
+	public int getCapacity() {
+		return capacity;
+	}
+
+//--- 스택에 쌓여있는 데이터 갯수를 반환 ---//
+	public int size() {
+		return top;
+	}
+
+//--- 스택이 비어있는가? ---//
+	public boolean isEmpty() {
+		return top <= 0;
+	}
+
+//--- 스택이 가득 찼는가? ---//
+	public boolean isFull() {
+		return top >= capacity;
+	}
+
+//--- 스택 안의 모든 데이터를 바닥 → 꼭대기 순서로 출력 ---//
+	public void dump() {
+		if (top <= 0)
+			System.out.println("stack이 비어있습니다.");
+		else {
+			for (int i = 0; i < top; i++)
+				System.out.print(data.get(i) + " ");
+			System.out.println();
+		}
+	}
+}
+
+//정수를 저정하는 이진트리 만들기 실습
+class ObjectQueue5 {
+	private TreeNode5[] que;// 큐는 배열로 구현
+	// private List<Integer> que; // 수정본
+	private int capacity; // 큐의 크기
+	private int front; // 맨 처음 요소 커서
+	private int rear; // 맨 끝 요소 커서
+	private int num; // 현재 데이터 개수
+
+//--- 실행시 예외: 큐가 비어있음 ---//
+	public class EmptyQueueException extends RuntimeException {
+		public EmptyQueueException(String msg) {
+			super(msg);
+		}
+	}
+
+//--- 실행시 예외: 큐가 가득 찼음 ---//
+	public class OverflowQueueException extends RuntimeException {
+		public OverflowQueueException(String msg) {
+			super(msg);
+		}
+	}
+
+//--- 생성자(constructor) ---//
+	public ObjectQueue5(int maxlen) {
+		num = front = rear = 0;
+		capacity = maxlen;
+		try {
+			que = new TreeNode5[maxlen];
+		} catch (OutOfMemoryError e) { // 생성할 수 없음
+			capacity = 0;
+		}
+	}
+
+//--- 큐에 데이터를 인큐 ---//
+	public int enque(TreeNode5 x) throws OverflowQueueException {
+		if (num >= capacity)
+			throw new OverflowQueueException("queue full"); // 큐가 가득 찼음
+		que[rear++] = x;
+		num++;
+
+		return 1;
+	}
+
+//--- 큐에서 데이터를 디큐 ---//
+	public TreeNode5 deque() throws EmptyQueueException {
+		if (num <= 0)
+			throw new EmptyQueueException("queue empty"); // 큐가 비어있음
+		TreeNode5 x = que[front++];
+		num--;
+
+		return x;
+	}
+
+//--- 큐에서 데이터를 피크(프런트 데이터를 들여다봄) ---//
+	public TreeNode5 peek() throws EmptyQueueException {
+		if (num <= 0)
+			throw new EmptyQueueException("queue empty"); // 큐가 비어있음
+		return que[front];
+	}
+
+//--- 큐를 비움 ---//
+	public void clear() {
+		num = front = rear = 0;
+	}
+
+//--- 큐에서 x를 검색하여 인덱스(찾지 못하면 –1)를 반환 ---//
+	public int indexOf(TreeNode5 x) {
+		for (int i = 0; i < num; i++) {
+			int idx = (i + front) % capacity;
+			if (que[idx].equals(x)) // 검색 성공
+				return idx;
+		}
+		return -1; // 검색 실패
+	}
+
+//--- 큐의 크기를 반환 ---//
+	public int getCapacity() {
+		return capacity;
+	}
+
+//--- 큐에 쌓여 있는 데이터 개수를 반환 ---//
+	public int size() {
+		return num;
+	}
+
+//--- 큐가 비어있는가? ---//
+	public boolean isEmpty() {
+		return num <= 0;
+	}
+
+//--- 큐가 가득 찼는가? ---//
+	public boolean isFull() {
+		return num >= capacity;
+	}
+
+//--- 큐 안의 모든 데이터를 프런트 → 리어 순으로 출력 ---//
+	public void dump() {
+		if (num <= 0)
+			System.out.println("큐가 비어있습니다.");
+		else {
+			for (int i = 0; i < num; i++)
+				System.out.print(que[((i + front) % capacity)] + " ");
+			System.out.println();
+		}
+	}
+}
+
+class Tree5 {
+	TreeNode5 root;
+
+	Tree5() {
+		root = null;
+	}
+
+	TreeNode5 inorderSucc(TreeNode5 current) {
+		TreeNode5 temp = current.RightChild;
+		if (current.RightChild != null)
+			while (temp.LeftChild != null)
+				temp = temp.LeftChild;
+		System.out.println("inordersucc:: temp.data = " + temp.data);
+		return temp;
+	}
+
+	boolean isLeafNode(TreeNode5 current) {
+		if (current.LeftChild == null && current.RightChild == null)
+			return true;
+		else
+			return false;
+	}
+
+	void inorder() {
+		inorder(root);
+	}
+
+	void preorder() {
+		preorder(root);
+	}
+
+	void postorder() {
+		postorder(root);
+	}
+
+	// --- 순서 트리 탐색 - 깊이 우선 탐색(세로형 탐색) : { inoreder (중위), preorder (전위), postorder (후위) } 재귀적 방법 --- // 
+	
+	void inorder(TreeNode5 CurrentNode) {				// 중위 순회하여 데이터 오름차순 출력 
+		if (CurrentNode != null) {						// 현재 노드 root 에 데이터가 존재하면
+			inorder(CurrentNode.LeftChild);				// 현재 노드의 왼쪽 자식 노드가 null 일 때 까지 recursive, 왼쪽 자식 노드를 재귀적으로 중위 순회
+			System.out.print(CurrentNode.data + " ");	// 현재 노드의 데이터를 출력(부모 노드)
+			inorder(CurrentNode.RightChild);			// 현재 노드의 오른쪽 자식 노드가 null 일 때 까지 recursive, 오른쪽 자식 노드를 재귀적으로 중위 순회
+		}
+	}
+
+	void preorder(TreeNode5 CurrentNode) {				// 전위 순회하여 데이터 출력
+		if (CurrentNode != null) {						// 현재 노드 root 에 데이터가 존재하면, 현재 노드가 존재하면
+			System.out.print(CurrentNode.data + " ");	// 현재 노드의 데이터를 출력(부모 노드)
+			preorder(CurrentNode.LeftChild);			// 왼쪽 자식 노드를 재귀적으로 전위 순회
+			preorder(CurrentNode.RightChild);			// 오른쪽 자식 노드를 재귀적으로 전위 순회
+		}
+	}
+
+	void postorder(TreeNode5 CurrentNode) {				// 후위 순회하여 데이터 출력
+		if (CurrentNode != null) {						// 현재 노드의 root 에 데이터가 존재하면, 현재 노드가 존재하면
+			postorder(CurrentNode.LeftChild);			// 왼쪽 자식 노드를 재귀적으로 후위 순회
+			postorder(CurrentNode.RightChild);			// 오른쪽 자식 노드를 재귀적으로 후위 순회
+			System.out.print(CurrentNode.data + " ");	// 현재 노드의 데이터를 출력(부모 노드)
+		}
+	}
+
+	// 스택을 사용하여 중위 순회(inorder traversal)를 비재귀적으로 수행
+	void NonrecInorder()
+	// void Tree5::inorder(TreeNode5 *CurrentNode)와 비교
+	// stack을 사용한 inorder 출력
+	{
+		ObjectStack5 s = new ObjectStack5(20);				// 크기가 20의 스택 객체를 생성
+		TreeNode5 CurrentNode = root;						// 현재 노드를 root 노드로 초기화
+		while (true) {										// 무한 루프
+			while (CurrentNode != null) {					// 현재 노드가 null 이 아닐 때까지 반복
+				s.push(CurrentNode);						// 현재 노드를 스택에 push
+				CurrentNode = CurrentNode.LeftChild;		// 현재 노드를 왼쪽 자식노드로 이동
+			}
+			if (!s.isEmpty()) {								// 스택이 비어 있지 않으면 실행
+				try {
+					CurrentNode = s.pop();					// 스택에서 노드를 pop 하여 현재 노드로 설정
+				} catch (Chapter9_트리.ObjectStack5.EmptyGenericStackException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();					// 스택이 비었을 때 예외 처리
+				}
+				System.out.println(CurrentNode.data + " ");	// 현재 노드의 데이터 출력
+				CurrentNode = CurrentNode.RightChild;		// 현재 노드를 오른쪽 자식노들 이동
+			} else											// 스택이 비어 있으면 무한 루프 종료
+				break;
+		}
+		System.out.println();								// 출력 결과를 위한 개행
+	}
+
+	void levelOrder() // level 별로 출력한다. level이 증가하면 다음줄에 출력한다
+	// 난이도: 최상급 구현
+	{
+		ObjectQueue5 q = new ObjectQueue5(20);
+		Queue<Integer> que = new LinkedList<>();
+		int oldLevel = 0,  newLevel=0;
+		que.add(oldLevel+1);
+		TreeNode5 CurrentNode = root;
+		newLevel = que.remove();	
+	}
+
+	boolean insert(int x) {
+		// binary search tree 를 만드는 입력 : left subtree < 노드 x < right subtree
+		// inorder traversal 시에 정렬된 결과가 나와야 한다
+		TreeNode5 p = root;								// 탐색을 시작할 현재 노드를 루트로 설정
+		TreeNode5 q = null;								// p 의 부모 노드를 저장할 변수, 이전 노드를 저장할 변수
+        TreeNode5 newNode = new TreeNode5();			// 새로운 노드 생성
+        newNode.data = x;								// 새로운 노드의 데이터(입력값 x) 설정
+        
+        while (p != null) {								// p 가 가리키는 노드가 존재하면
+            q = p;										// q 를 현재 노드로 설정
+            if (p.data == x) {							// 현재 노드의 데이터가 입력값 x 와 같다면 중복값, 삽입 실패, false 를 반환
+                System.out.println("\n중복된 데이터가 삽입되었습니다.");
+                return false;
+            } else if (x < p.data) {					// 입력값 x가 현재 노드의 데이터보다 작다면
+                p = p.LeftChild;						// 현재 노드의 왼쪽 자식을 다시 참조 변수 p 가 가리킴, 현재 노드가 왼쪽 자식 노드로의 이동
+            } else {									// 입력값 x가 현재 노드의 데이터보다 크다면
+                p = p.RightChild;						// 현재 노드의 오른쪽 자식을 다시 참조 변수 p 가 가리킴, 현재 노드가 오른쪽 자식 노드로의 이동
+            }
+        }
+        
+        // 새로운 노드를 q(이전 노드)의 자식으로 설정
+        if (root == null)								// 트리가 비어 있으면 
+        	root = newNode;								// 새로운 노드를 root 로 설정
+        else if (x < q.data)							// 새로운 노드의 데이터가 이전 노드의 데이터보다 작다면 
+        	q.LeftChild = newNode;						// 새로운 노드를 이전 노드의 왼쪽 자식으로 설정
+        else											// 새로운 노드의 데이터가 이전 노드의 데이터보다 크다면
+        	q.RightChild = newNode;						// 새로운 노드를 이전 노드의 오른쪽 자식으로 설정  
+        
+        return true;									// 입력값 x 삽입 성공, true 를 반환
+	}
+
+	boolean delete(int num) {
+		// binary search tree에서 임의 값을 갖는 노드를 찾아 삭제한다.
+		// 삭제 대상이 leaf node인 경우, non-leaf node로 구분하여 구현한다
+		
+		// p 현재 노드를 가리킴, q 부모 노드를 가리킴, parent 삭제할 노드의 부모 노드를 가리킴( 현재 노드 p 의 이전노드를 가리킴) 
+		TreeNode5 p = root, q = null, parent = null;
+		
+		// 삭제할 노드가 부모의 왼쪽 자식인지 오른쪽 자식인지를 나타냄
+		int branchMode = 0; // 1은 left, 2는 right
+		
+		if (root == null)						// 트리가 비어 있는 경우, 삭제할 노드 없음, false 를 반환
+			return false;
+		
+		// 삭제할 노드 찾기
+		while (p != null && p.data != num) {	// 현재 노드가 null 이고, 현재 노드의 데이터가 찾고자하는 입력값(num)이면 반복 종료
+			parent = p;							// parent 는 현재 노드 p 를 가리킴
+			
+			if (num < p.data) {					// 입력값(num)이 현재 노드의 데이터보다 작으면 
+				p = p.LeftChild;				// 현재 노드를 왼쪽 자식으로 이동
+				branchMode = 1;					// 왼쪽 자식으로 이동했다는 표시
+			} else {
+				p = p.RightChild;				// 입력값(num)이 현재 노드의 데이터보다 크면
+				branchMode = 2;					// 오른쪽 자식으로 이동했다는 표시
+			}
+		}
+		
+		if (p == null) {						// 현재 노드가 null 인 경우
+			return false;						// 삭제할 노드를 찾지 못함, false 를 반환
+		}
+		
+		// p 는 삭제할 노드를 가리킴
+		
+		// case1 : 삭제할 노드가 리프 노드인 경우
+		if (p.LeftChild == null && p.RightChild == null) {
+			if (p == root) {					// 삭제할 노드가 root 인 경우
+				root = null;					// 트리가 비게됨
+			} 
+			else if (branchMode == 1) {			// 삭제할 노드가 왼쪽 자식일 경우
+				parent.LeftChild = null;		// 부모 노드의 왼쪽 자식을 null, 삭제 
+			} else {
+				parent.RightChild = null;		// 부모 노드의 오른쪽 자식을 null, 삭제
+			}
+		}
+		
+		// case2 : 삭제할 노드가 하나의 자식만 갖는 경우
+		else if (p.LeftChild == null || p.RightChild == null) {
+			// (삼항연산자)왼쪽 자식인지 오른쪽 자식인지 확인하고 child 에 저장  
+			TreeNode5 child = (p.LeftChild != null) ? p.LeftChild : p.RightChild;
+			
+			if (p == root) {					// 삭제할 노드가 root 인 경우
+				root = child;					// 자식 노드를 root 노드로 설정 
+			}
+			else if (branchMode == 1) {			// 삭제할 노드가 왼쪽 자식일 경우
+				parent.LeftChild = child;		// 부모 노드의 왼쪽 자식을 child 로 설정, 삭제할 노드 p 삭제
+			} else {							// 삭제할 노드가 오른쪽 자식일 경우
+				parent.RightChild = child;		// 부모 노드의 오른쪽 자식을 child 로 설정, 삭제할 노드 p 삭제
+			}
+		}
+		
+		// case3 : 삭제할 노드가 두 개의 자식을 갖는 경우
+		else {
+			// 삭제할 노드를 대체할 노드를 찾음
+			// 오른쪽 서브트리(자식)에서 가장 작은 값 또는 왼쪽 서브트리(자식)에서 가장 큰 값을 찾음
+			TreeNode5 successorP = p;							// 현재 삭제할 노드 p 를 가리킴, successor 의 부모 노드를 추적
+			TreeNode5 successor = p.RightChild;					// successor 는 삭제할 노드 p 의 오른쪽 자식을 가리킴
+																// p 의 오른쪽 서브트리에서 가장 작은 값을 가진 노드를 찾기 위해 초기화
+			
+			while (successor.LeftChild != null) {				// 삭제할 노드 p 의 오른쪽 자식에서 가장 작은 값을 찾기 위해 가장 왼쪽 자식으로 이동
+				successorP = successor;							// successor 의 부모 노드를 successorP로 설정
+				successor = successor.LeftChild;				// successor 를 왼쪽 자식으로 업데이트 (가장 작은 값을 가진 노드로 이동)
+			}
+			
+			// successor 가 삭제할 노드의 대체 노드가 됨
+			
+			p.data = successor.data;							// 삭제할 노드의 데이터를 successor 의 데이터로 교체
+			
+			// successor 부모 노드 successorP 와 successor 의 자식을 연결
+			if (successorP.LeftChild == successor) {			// successor 가 부모의 왼쪽 자식일 경우
+				successorP.LeftChild = successor.RightChild;	// successor 의 오른쪽 자식을 부모 노드의 왼쪽 자식으로 연결
+			} else {											// successor 가 부모의 오른쪽 자식일 경우
+				successorP.RightChild = successor.RightChild;	// successor 의 오른쪽 자식을 부모 노드의 오른쪽 자식으로 연결
+			}
+		}
+		
+		return true;							// 노드 삭제가 성공적으로 완료되었음을 반환 
+	}
+
+	boolean search(int num) {			// num 값을 binary search tree 에서 검색
+        TreeNode5 p = root;				// 검색을 시작할 현재 노드 p 를 root 로 설정
+
+        while (p != null) {				// 현재 노드가 null 이 아닐 때까지 반복
+            if (p.data == num)			// 현재 노드의 데이터가 찾고자 하는 값(num)과 같으면
+                return true;			// true 를 반환 (찾음)
+            else if (num < p.data)		// 찾고자 하는 값(num)이 현재 노드의 데이터 보다 작을 경우
+                p = p.LeftChild;		// 왼쪽 자식 노드로 이동 (작은 값을 찾기 위해)
+            else						// 찾고자 하는 값(num)이 현재 노드의 데이터 보다 클 경우
+                p = p.RightChild;		// 오른쪽 자식 노드로 이동 (큰 값을 찾기 위해)
+        }
+
+        return false;					// 찾고자 하는 값(num)을 검색하지 못하고 트리의 끝에 도달하면 false 를 반환
+	}
+	
+}
+
+public class 과제_실습9_1_Test_정수이진트리 {
+	
+	enum Menu {
+		Add("삽입"), Delete("삭제"), Search("검색"), InorderPrint("정렬출력"), LevelorderPrint("레벨별출력"),
+		StackInorderPrint("스택정렬출력"), PreorderPrint("prefix출력"), PostorderPrint("postfix출력"), Exit("종료");
+
+		private final String message; // 표시할 문자열
+
+		static Menu MenuAt(int idx) { // 순서가 idx번째인 열거를 반환
+			for (Menu m : Menu.values())
+				if (m.ordinal() == idx)
+					return m;
+			return null;
+		}
+
+		Menu(String string) { // 생성자(constructor)
+			message = string;
+		}
+
+		String getMessage() { // 표시할 문자열을 반환
+			return message;
+		}
+	}
+
+	// --- 메뉴 선택 ---//
+	static Menu SelectMenu() {
+		Scanner stdIn = new Scanner(System.in);
+		int key;
+		do {
+			for (Menu m : Menu.values())
+				System.out.printf("(%d) %s  ", m.ordinal(), m.getMessage());
+			System.out.print(" : ");
+			key = stdIn.nextInt();
+		} while (key < Menu.Add.ordinal() || key > Menu.Exit.ordinal());
+
+		return Menu.MenuAt(key);
+	}
+
+	public static void main(String[] args) {
+		Random rand = new Random();
+		Scanner stdIn = new Scanner(System.in);
+		Tree5 t = new Tree5();
+		Menu menu; // 메뉴
+		int count = 10;
+		int num;
+		boolean result;
+		do {
+			switch (menu = SelectMenu()) {
+			case Add:						// 트리에 정수 추가
+				int[] input = new int[count];			// count 개의 배열 공간을 할당 
+				for (int ix = 0; ix < count; ix++) {	// 배열의 요소를 random 값 0 ~ 50사이의 숫자로 채움
+					input[ix] = rand.nextInt(50);
+				}
+				for (int n : input)						// 배열의 요소를 하나씩 출력(확장형 for 문)
+					System.out.print(n + " ");
+				System.out.println("\n");
+				for (int i = 0; i < count; i++) {		// count 개의 배열 요소들을 트리에 삽입
+					if (!t.insert(input[i]))			// tree 에 배열 요소를 삽입할 수 없을 경우, 중복 데이터로 간주
+						System.out.println("Insert Duplicated data\n");
+				}
+				break;
+
+			case Delete: 					// 임의 정수 삭제
+				System.out.print("삭제할 데이터:: ");
+				num = stdIn.nextInt();
+				if (t.delete(num))
+					System.out.println("삭제 데이터 = " + num + " 성공\n");
+				else
+					System.out.println("삭제 실패\n");
+				;
+				break;
+
+			case Search: 					// 노드 검색
+				System.out.println("검색할 데이터:: ");
+
+				num = stdIn.nextInt();
+				result = t.search(num);
+				if (result)
+					System.out.println("데이터 = " + num + " 이 존재합니다.\n");
+				else
+					System.out.println("해당 데이터가 없습니다.\n");
+				break;
+
+			case InorderPrint: 				// 전체 노드를 키값의 오름차순으로 표시
+				t.inorder();				// 트리를 중위 순회하여 정렬된 값 출력
+				System.out.println("\n");
+				// t.NonrecInorder();
+				break;
+				
+			case LevelorderPrint:
+				t.levelOrder();
+				System.out.println("\n");
+				break;
+				
+			case StackInorderPrint: 		// 전체 노드를 키값의 오름차순으로 표시
+				t.NonrecInorder();
+				break;
+				
+			case PreorderPrint:				// prefix 출력
+				t.preorder();				// 트리를 전위 순회하여 출력
+				System.out.println("\n");
+				break;
+				
+			case PostorderPrint:			// postfix로 출력
+				t.postorder();				// 트리를 후위 순회하여 출력
+				System.out.println("\n");
+				break;
+			}
+		} while (menu != Menu.Exit);
+	}
+}
