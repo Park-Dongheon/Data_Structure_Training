@@ -263,31 +263,34 @@ class Tree5 {
 		postorder(root);
 	}
 
-	void inorder(TreeNode5 CurrentNode) {
-		if (CurrentNode != null) {
-			inorder(CurrentNode.LeftChild);
-			System.out.print(" " + CurrentNode.data);
-			inorder(CurrentNode.RightChild);
+	// --- 순서 트리 탐색 - 깊이 우선 탐색(세로형 탐색) : { inoreder (중위), preorder (전위), postorder (후위) } 재귀적 방법 --- // 
+	
+	void inorder(TreeNode5 CurrentNode) {				// 중위 순회하여 데이터 오름차순 출력 
+		if (CurrentNode != null) {						// 현재 노드 root 에 데이터가 존재하면
+			inorder(CurrentNode.LeftChild);				// 현재 노드의 왼쪽 자식 노드가 null 일 때 까지 recursive, 왼쪽 자식 노드를 재귀적으로 중위 순회
+			System.out.print(CurrentNode.data + " ");	// 현재 노드의 데이터를 출력(부모 노드)
+			inorder(CurrentNode.RightChild);			// 현재 노드의 오른쪽 자식 노드가 null 일 때 까지 recursive, 오른쪽 자식 노드를 재귀적으로 중위 순회
 		}
 	}
 
-	void preorder(TreeNode5 CurrentNode) {
-		if (CurrentNode != null) {
-			System.out.print(CurrentNode.data + " ");
-			preorder(CurrentNode.LeftChild);
-			preorder(CurrentNode.RightChild);
+	void preorder(TreeNode5 CurrentNode) {				// 전위 순회하여 데이터 출력
+		if (CurrentNode != null) {						// 현재 노드 root 에 데이터가 존재하면, 현재 노드가 존재하면
+			System.out.print(CurrentNode.data + " ");	// 현재 노드의 데이터를 출력(부모 노드)
+			preorder(CurrentNode.LeftChild);			// 왼쪽 자식 노드를 재귀적으로 전위 순회
+			preorder(CurrentNode.RightChild);			// 오른쪽 자식 노드를 재귀적으로 전위 순회
 		}
 	}
 
-	void postorder(TreeNode5 CurrentNode) {
-		if (CurrentNode != null) {
-			postorder(CurrentNode.LeftChild);
-			postorder(CurrentNode.RightChild);
-			System.out.print(CurrentNode.data + " ");
+	void postorder(TreeNode5 CurrentNode) {				// 후위 순회하여 데이터 출력
+		if (CurrentNode != null) {						// 현재 노드의 root 에 데이터가 존재하면, 현재 노드가 존재하면
+			postorder(CurrentNode.LeftChild);			// 왼쪽 자식 노드를 재귀적으로 후위 순회
+			postorder(CurrentNode.RightChild);			// 오른쪽 자식 노드를 재귀적으로 후위 순회
+			System.out.print(CurrentNode.data + " ");	// 현재 노드의 데이터를 출력(부모 노드)
 		}
 	}
 
-	void NonrecInorder()// void Tree5::inorder(TreeNode5 *CurrentNode)와 비교
+	void NonrecInorder()
+	// void Tree5::inorder(TreeNode5 *CurrentNode)와 비교
 	// stack을 사용한 inorder 출력
 	{
 		ObjectStack5 s = new ObjectStack5(20);
@@ -315,107 +318,54 @@ class Tree5 {
 	void levelOrder() // level 별로 출력한다. level이 증가하면 다음줄에 출력한다
 	// 난이도: 최상급 구현
 	{
-	    if (root == null)
-	        return;
-
-	    ObjectQueue5 q = new ObjectQueue5(20);
-	    q.enque(root);
-
-	    while (!q.isEmpty()) {
-	        int levelSize = q.size(); // 현재 레벨의 노드 개수를 저장
-
-	        for (int i = 0; i < levelSize; i++) {
-	            TreeNode5 node = q.deque();
-
-	            // 현재 노드 출력
-	            System.out.print(node.data + " ");
-
-	            // 자식 노드가 있는 경우 큐에 추가
-	            if (node.LeftChild != null)
-	                q.enque(node.LeftChild);
-
-	            if (node.RightChild != null)
-	                q.enque(node.RightChild);
-	        }
-
-	        // 레벨 구분을 위해 줄바꿈
-	        System.out.println();
-	    }
+		ObjectQueue5 q = new ObjectQueue5(20);
+		Queue<Integer> que = new LinkedList<>();
+		int oldLevel = 0,  newLevel=0;
+		que.add(oldLevel+1);
+		TreeNode5 CurrentNode = root;
+		newLevel = que.remove();	
 	}
 
-	boolean insert(int x) {// binary search tree를 만드는 입력 : left subtree < 노드 x < right subtree
-		// inorder traversal시에 정렬된 결과가 나와야 한다
-		TreeNode5 p = root;
-		TreeNode5 q = null;
-        TreeNode5 newNode = new TreeNode5();
-        newNode.data = x;
-
-        if (root == null) {
-            root = newNode;
-            return true;
-        }
-
-        while (p != null) {
-            q = p;
-            if (p.data == x) {
-                System.out.println("중복된 데이터가 삽입되었습니다.");
+	boolean insert(int x) {
+		// binary search tree 를 만드는 입력 : left subtree < 노드 x < right subtree
+		// inorder traversal 시에 정렬된 결과가 나와야 한다
+		TreeNode5 p = root;								// 탐색을 시작할 현재 노드를 루트로 설정
+		TreeNode5 q = null;								// p 의 부모 노드를 저장할 변수, 이전 노드를 저장할 변수
+        TreeNode5 newNode = new TreeNode5();			// 새로운 노드 생성
+        newNode.data = x;								// 새로운 노드의 데이터(입력값 x) 설정
+        
+        while (p != null) {								// p 가 가리키는 노드가 존재하면
+            q = p;										// q 를 현재 노드로 설정
+            if (p.data == x) {							// 현재 노드의 데이터가 입력값 x 와 같다면 중복값, 삽입 실패, false 를 반환
+                System.out.println("\n중복된 데이터가 삽입되었습니다.");
                 return false;
-            } else if (p.data > x) {
-                p = p.LeftChild;
-            } else {
-                p = p.RightChild;
+            } else if (x < p.data) {					// 입력값 x가 현재 노드의 데이터보다 작다면
+                p = p.LeftChild;						// 현재 노드의 왼쪽 자식을 다시 참조 변수 p 가 가리킴, 현재 노드가 왼쪽 자식 노드로의 이동
+            } else {									// 입력값 x가 현재 노드의 데이터보다 크다면
+                p = p.RightChild;						// 현재 노드의 오른쪽 자식을 다시 참조 변수 p 가 가리킴, 현재 노드가 오른쪽 자식 노드로의 이동
             }
         }
-
-        if (q.data > x)
-            q.LeftChild = newNode;
-        else
-            q.RightChild = newNode;
-
-        return true;
+        
+        // 새로운 노드를 q(이전 노드)의 자식으로 설정
+        if (root == null)								// 트리가 비어 있으면 
+        	root = newNode;								// 새로운 노드를 root 로 설정
+        else if (x < q.data)							// 새로운 노드의 데이터가 이전 노드의 데이터보다 작다면 
+        	q.LeftChild = newNode;						// 새로운 노드를 이전 노드의 왼쪽 자식으로 설정
+        else											// 새로운 노드의 데이터가 이전 노드의 데이터보다 크다면
+        	q.RightChild = newNode;						// 새로운 노드를 이전 노드의 오른쪽 자식으로 설정  
+        
+        return true;									// 입력값 x 삽입 성공, true 를 반환
 	}
 
-	boolean delete(int num) {// binary search tree에서 임의 값을 갖는 노드를 찾아 삭제한다.
+	boolean delete(int num) {
+		// binary search tree에서 임의 값을 갖는 노드를 찾아 삭제한다.
 		// 삭제 대상이 leaf node인 경우, non-leaf node로 구분하여 구현한다
 		TreeNode5 p = root, q = null, parent = null;
 		int branchMode = 0; // 1은 left, 2는 right
-        while (p != null && p.data != num) {
-            parent = p;
-            if (p.data > num) {
-                p = p.LeftChild;
-                branchMode = 1;
-            } else {
-                p = p.RightChild;
-                branchMode = 2;
-            }
-        }
-
-        if (p == null)
-            return false;
-
-        if (isLeafNode(p)) { // Leaf Node 경우
-            if (branchMode == 1)
-                parent.LeftChild = null;
-            else
-                parent.RightChild = null;
-        } else if (p.LeftChild == null || p.RightChild == null) { // 하나의 자식을 가진 경우
-            TreeNode5 child;
-            if (p.LeftChild != null)
-                child = p.LeftChild;
-            else
-                child = p.RightChild;
-
-            if (branchMode == 1)
-                parent.LeftChild = child;
-            else
-                parent.RightChild = child;
-        } else { // 두 개의 자식을 가진 경우
-            TreeNode5 succ = inorderSucc(p);
-            delete(succ.data);
-            p.data = succ.data;
-        }
-
-        return true;
+		if (root == null)
+			return false;
+		
+		return false;
 	}
 
 	boolean search(int num) {// num 값을 binary search tree에서 검색
@@ -436,6 +386,7 @@ class Tree5 {
 }
 
 public class 정수이진트리 {
+	
 	enum Menu {
 		Add("삽입"), Delete("삭제"), Search("검색"), InorderPrint("정렬출력"), LevelorderPrint("레벨별출력"),
 		StackInorderPrint("스택정렬출력"), PreorderPrint("prefix출력"), PostorderPrint("postfix출력"), Exit("종료");
@@ -477,21 +428,22 @@ public class 정수이진트리 {
 		Scanner stdIn = new Scanner(System.in);
 		Tree5 t = new Tree5();
 		Menu menu; // 메뉴
-		int count = 20;
+		int count = 10;
 		int num;
 		boolean result;
 		do {
 			switch (menu = SelectMenu()) {
 			case Add: //
-				int[] input = new int[count];
-				for (int ix = 0; ix < count; ix++) {
+				int[] input = new int[count];			// count 개의 배열 공간을 할당 
+				for (int ix = 0; ix < count; ix++) {	// 배열의 요소를 random 값 0 ~ 50사이의 숫자로 채움
 					input[ix] = rand.nextInt(50);
 				}
-				for (int n : input)
+				for (int n : input)						// 배열의 요소를 하나씩 출력(확장형 for 문)
 					System.out.print(n + " ");
-				for (int i = 0; i < count; i++) {
-					if (!t.insert(input[i]))
-						System.out.println("Insert Duplicated data");
+				System.out.println();
+				for (int i = 0; i < count; i++) {		// count 개의 배열 요소들을 트리에 삽입
+					if (!t.insert(input[i]))			// tree 에 배열 요소를 삽입할 수 없을 경우, 중복 데이터로 간주
+						System.out.println("Insert Duplicated data\n");
 				}
 				break;
 
@@ -516,25 +468,29 @@ public class 정수이진트리 {
 					System.out.println("해당 데이터가 없습니다.");
 				break;
 
-			case InorderPrint: // 전체 노드를 키값의 오름차순으로 표시
-				t.inorder();
+			case InorderPrint: 				// 전체 노드를 키값의 오름차순으로 표시
+				t.inorder();				// 트리를 중위 순회하여 정렬된 값 출력
 				System.out.println();
 				// t.NonrecInorder();
 				break;
+				
 			case LevelorderPrint: //
 				t.levelOrder();
 				System.out.println();
 				// t.NonrecInorder();
 				break;
+				
 			case StackInorderPrint: // 전체 노드를 키값의 오름차순으로 표시
 				t.NonrecInorder();
 				break;
-			case PreorderPrint:// prefix 출력
-				t.preorder();
+				
+			case PreorderPrint:				// prefix 출력
+				t.preorder();				// 트리를 전위 순회하여 출력
 				System.out.println();
 				break;
-			case PostorderPrint:// postfix로 출력
-				t.postorder();
+				
+			case PostorderPrint:			// postfix로 출력
+				t.postorder();				// 트리를 후위 순회하여 출력
 				System.out.println();
 				break;
 			}
