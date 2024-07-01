@@ -19,27 +19,6 @@ class Node {
 		return key;
 	}
 
-	// key 값을 기반으로 해시 코드를 생성
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return Integer.hashCode(key);
-	}
-
-	// 노드의 key 값이 같은지 비교
-	@Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		Node node = (Node) o;
-
-		return key == node.key;
-	}
-
 }
 
 class SimpleChainHash {
@@ -55,12 +34,13 @@ class SimpleChainHash {
 		}
 	}
 
+	//--- 해시 값을 구함 ---//
 	public int hashValue(int key) {
 //		return key.hashCode() % size;
-		return (key * key * 31) % size; // 31은 소수이자 홀수, 비트 연산 최적화가 가능
+		return (key * key * 31) % size; 			// 31은 소수이자 홀수, 비트 연산 최적화가 가능
 	}
-
-	// --- 키값이 key인 요소를 검색(데이터를 반환) ---//
+	
+	//--- 키값이 key인 요소를 검색(데이터를 반환) ---//
 	public int search(int key) {
 		int hash = hashValue(key); 					// 검색할 데이터의 해시값
 		Node selectN = table[hash]; 				// 선택 노드
@@ -75,7 +55,7 @@ class SimpleChainHash {
 		return 0; 									// 검색 실패
 	}
 
-	// --- 키값이 key인 데이터를 data의 요소로 추가 ---//
+	//--- 키값이 key인 데이터를 data의 요소로 추가 ---//
 	public int add(int key) {
 		int hash = hashValue(key); 					// 추가할 데이터의 해시값
 		Node selectN = table[hash]; 				// 선택 노드
@@ -94,7 +74,7 @@ class SimpleChainHash {
 		return 1;									// 새 노드가 성공적으로 추가
 	}
 
-	// --- 키값이 key인 요소를 삭제 ---//
+	//--- 키값이 key인 요소를 삭제 ---//
 	public int delete(int key) {
 		int hash = hashValue(key);					// 삭제할 데이터의 해시값
 		Node selectN = table[hash];					// 선택 노드
@@ -105,7 +85,7 @@ class SimpleChainHash {
 				if (prevN == null) {				// 이전 노드가 null 인 경우, 해시 값이 충돌이 발생하지 않은 경우
 					table[hash] = selectN.next;		// 해시 테이블의 값을 선택 노드의 링크로 설정
 				}
-				else {								// 해시 값의 충돌이 발생하여 오픈 해시법(Chaining) 형태인 경우
+				else {								// 해시 값의 충돌이 발생하여 오픈 해시법(Chaining)로 LinkedList 인 경우
 					prevN.next = selectN.next;		// 이전 노드의 링크를 선택 노드의 다음 노드로 설정
 				}
 				return 1;
@@ -119,11 +99,11 @@ class SimpleChainHash {
 		return 0;									// 삭제할 데이터가 없음
 	}
 
-	// --- 해시 테이블을 덤프(dump) ---//
+	//--- 해시 테이블을 덤프(dump) ---//
 	public void dump() {
-		for (int i = 0; i < size; i++) {					// 해시 테이블의 인덱스를 순회
-			Node selectN = table[i];						// 각 인덱스의 선택 노드
-			System.out.printf("%02d : ", i);				// 인덱스 출력
+		for (int i = 0; i < size; i++) {					// 해시 테이블의 버킷을 순회
+			Node selectN = table[i];						// 각 버킷의 연결리스트(체이닝) 생성
+			System.out.printf("%02d : ", i);				// 버킷 출력
 			while (selectN != null) {						// 선택 노드가 null 일 때까지 반복
 				System.out.printf("-> %s ", selectN.key);	// 선택 노드의 key 값 출력
 				selectN = selectN.next;						// 다음 노드로 이동
@@ -140,20 +120,20 @@ public class 실습10_1정수체인해시 {
 	enum Menu {
 		Add("삽입"), Delete("삭제"), Search("검색"), Show("출력"), Exit("종료");
 
-		private final String message; // 표시할 문자열
+		private final String message; 			// 표시할 문자열
 
-		static Menu MenuAt(int idx) { // 순서가 idx번째인 열거를 반환
+		static Menu MenuAt(int idx) { 			// 순서가 idx 번째인 열거를 반환
 			for (Menu m : Menu.values())
 				if (m.ordinal() == idx)
 					return m;
 			return null;
 		}
 
-		Menu(String string) { // 생성자(constructor)
+		Menu(String string) { 					// 생성자(constructor)
 			message = string;
 		}
 
-		String getMessage() { // 표시할 문자열을 반환
+		String getMessage() { 					// 표시할 문자열을 반환
 			return message;
 		}
 	}
@@ -183,6 +163,7 @@ public class 실습10_1정수체인해시 {
 		Scanner stdIn = new Scanner(System.in);
 		int select = 0, result = 0, val = 0;
 		final int count = 15;
+		
 		do {
 			switch (menu = SelectMenu()) {
 			case Add:
@@ -206,7 +187,7 @@ public class 실습10_1정수체인해시 {
 				val = stdIn.nextInt();
 				result = hash.delete(val);
 				if (result == 1)
-					System.out.println("삭제할 데이터가 존재한다");
+					System.out.println("삭제할 데이터가 존재한다. " + val);
 				else
 					System.out.println("삭제할 데이터가 없음");
 				System.out.println();
@@ -217,7 +198,7 @@ public class 실습10_1정수체인해시 {
 				val = stdIn.nextInt();
 				result = hash.search(val);
 				if (result == 1)
-					System.out.println("검색 데이터가 존재한다");
+					System.out.println("검색 데이터가 존재한다. " + val);
 				else
 					System.out.println("검색 데이터가 없음");
 				System.out.println();
@@ -225,6 +206,11 @@ public class 실습10_1정수체인해시 {
 
 			case Show:
 				hash.dump();
+				System.out.println();
+				break;
+			
+			case Exit:
+				System.out.println("프로그램을 종료합니다.");
 				break;
 			}
 		} while (menu != Menu.Exit);

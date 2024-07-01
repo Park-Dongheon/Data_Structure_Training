@@ -1,0 +1,277 @@
+package Chapter10_해시;
+/* hash node 가 student 객체일 때를 구현하는 과제
+ * 체인법에 의한 해시 
+ */
+
+import java.util.Comparator;
+import java.util.Scanner;
+
+/**
+ * 
+ */
+class SimpleObject5 {
+	static final int NO = 1;	// 회원번호 입력 플래그
+	static final int NAME = 2;	// 이름 입력 플래그
+	
+	String no; 					// 회원번호(키 값)
+	String name; 				// 이름
+	
+	//--- 문자열 표현을 반환 ---//
+	@Override
+	public String toString() {
+		return "(회원번호: " + no + ", 이름: " + name + ")";
+	}
+
+	//--- 기본 생성자 ---//
+	public SimpleObject5() {
+		this.no = null;
+		this.name = null;
+	}
+
+	//--- 생성자 초기화 ---//
+	public SimpleObject5(String no, String name) {
+		this.no = no;
+		this.name = name;
+	}
+
+	//--- 데이터 입력 ---//
+	public void scanData(String guide, int sw) {
+		Scanner sc = new Scanner(System.in);
+		System.out.println(guide + "할 데이터를 입력하세요." + sw);
+		
+		if ((sw & NO) == NO) {
+			System.out.print("번호: ");
+			no = sc.next();
+		}
+		if ((sw & NAME) == NAME) {
+			System.out.print("이름: ");
+			name = sc.next();
+		}
+	}
+	
+	//--- 회원 번호로 순서를 매기는 comparator ---//
+	public static final Comparator<SimpleObject5> NO_ORDER = new NoOrderComparator();
+	
+	public static class NoOrderComparator implements Comparator<SimpleObject5> {
+		@Override
+		public int compare(SimpleObject5 o1, SimpleObject5 o2) {
+			int num1 = Integer.parseInt(o1.no);
+			int num2 = Integer.parseInt(o2.no);
+			return (num1 > num2) ? 1 : (num1 < num2) ? -1 : 0;
+		}
+	}
+	
+	//--- 이름으로 순서를 매기는 comparator ---??
+	public static final Comparator<SimpleObject5> NAME_ORDER = new NameOrderComparator();
+	
+	public static class NameOrderComparator implements Comparator<SimpleObject5> {
+		@Override
+		public int compare(SimpleObject5 o1, SimpleObject5 o2) {
+			return o1.name.compareTo(o2.name);
+		}
+	}
+	
+	//--- 키의 해시값을 반환 ---//
+	@Override
+	public int hashCode() {
+		return no != null ? no.hashCode() : 0;
+	}
+
+	//--- 노드의 key 값이 같은지 비교 ---//
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		
+		SimpleObject5 member = (SimpleObject5) o;
+		
+		return no != null ? no.equals(member.no) : member.no == null;
+	}
+}
+
+class ChainHash5 {
+//--- 해시를 구성하는 노드 ---//
+	
+	private int size; 					// 해시 테이블의 크기
+	private Node2[] table;				// 해시 테이블
+	
+	class Node2 {
+		private SimpleObject5 data; 	// 키값
+		private Node2 next;	 			// 뒤쪽 포인터(뒤쪽 노드에 대한 참조)
+		
+		//--- 생성자(constructor) ---//
+		public Node2(SimpleObject5 data, Node2 next) {
+			this.data = data;
+			this.next = next;
+		}
+
+		//--- 키값(데이터)을 반환 ---//
+		public SimpleObject5 getData() {
+			return data;
+		}
+		
+	}
+
+	//--- 생성자(constructor) ---//
+	public ChainHash5(int capacity) {
+		try {
+			table = new Node2[capacity];
+			this.size = capacity;
+		} catch (OutOfMemoryError e) {
+			this.size = 0;
+		}
+	}
+	
+	//--- 해시 값을 구함 ---//
+	public int hashValue(SimpleObject5 key) {
+		return (key.hashCode() * key.hashCode() * 31) % size;
+//		return key.hashCode() % size;
+	}
+
+	//--- 키값이 key인 요소를 검색(데이터를 반환) ---//
+	public int search(SimpleObject5 st, Comparator<? super SimpleObject5> c) {
+		int hash = hashValue(st);						// 검색할 데이터의 해시값
+		Node2 selectN = table[hash];					// 선택 노드
+		
+		while (selectN != null) {						// 선택 노드가 null 일 때까지 반복
+			if (selectN.getData().equals(st))			// 선택 노드의 key(data)값과 검색할 key 값일 일치할 경우
+				return 1;								// 검색 성공
+			selectN = selectN.next;						// 다음 노드를 선택
+		}
+		
+		return 0;										// 검색 실패
+	}
+
+	//--- 키값이 key인 데이터를 data의 요소로 추가 ---//
+	public int add(SimpleObject5 st, Comparator<? super SimpleObject5> c) {
+		int hash = hashValue(st);						// 추가할 데이터의 해시값
+		Node2 selectN = table[hash];					// 선택 노드
+		
+		// 선택 노드의 해시 값이 존재할 경우, key 값이 중복값인지 확인
+		while (selectN != null) {						// 선택 노드가 null 일 때까지 반복
+			if (c.compare(st, selectN.data) == 0)		// 추가할 데이터의 key 값과 선택 노드의 key 값(data)이 같은지 비교
+				return 1;								// 이 키 값은 이미 등록됨, 중복 Duplicated data
+			selectN = selectN.next;						// 중복값이 아닌 경우 다음 노드로 이동
+		}
+		
+		// 충돌이 발생할 경우 연결 리스트(체이닝)를 사용하여 새로운 노드를 추가
+		Node2 newNode = new Node2(st, table[hash]);		// 새 노드를 기존의 첫 번째 노드 앞에 추가
+		table[hash] = newNode;							// 새 노드를 테이블에 삽입
+		return 0;										// 새 노드가 성공적으로 추가
+	}
+
+	//--- 키값이 key인 요소를 삭제 ---//
+	public int delete(SimpleObject5 st, Comparator<? super SimpleObject5> c) {
+		return size;
+
+	}
+
+	//--- 해시 테이블을 덤프(dump) ---//
+	public void dump() {
+		for (int i = 0; i < size; i++) {					// 해시 테이블의 버킷을 순회
+			Node2 selectN = table[i];						// 각 버킷의 연결리스트(체이닝), 선택 노드
+			System.out.printf("%02d : ", i);				// 버킷 출력
+			while (selectN != null) {						// 선택 노드가 null 일 때까지 반복
+				System.out.printf("-> %s ", selectN.data);	// 선택 노드의 key(data)값 출력
+				selectN = selectN.next;						// 다음 노드로 이동
+			}
+			System.out.println();							// 해시 테이블의 다음 버킷
+		}
+	}
+}
+
+public class 과제_실습10_2객체체인해시 {
+	// 메뉴 열거형
+	enum Menu {
+		Add("삽입"), Delete("삭제"), Search("검색"), Show("출력"), Exit("종료");
+
+		private final String message; 			// 표시할 문자열
+
+		static Menu MenuAt(int idx) { 			// 순서가 idx 번째인 열거를 반환
+			for (Menu m : Menu.values())
+				if (m.ordinal() == idx)
+					return m;
+			return null;
+		}
+
+		Menu(String string) { 					// 생성자(constructor)
+			message = string;
+		}
+
+		String getMessage() { 					// 표시할 문자열을 반환
+			return message;
+		}
+	}
+
+	// --- 메뉴 선택 ---//
+	static Menu SelectMenu() {
+		Scanner sc = new Scanner(System.in);
+		int key;
+		
+		do {
+			for (Menu m : Menu.values()) {
+				System.out.printf("(%d) %s  ", m.ordinal(), m.getMessage());
+				if ((m.ordinal() % 3) == 2 && m.ordinal() != Menu.Exit.ordinal())
+					System.out.println();
+			}
+			System.out.print(" : ");
+			key = sc.nextInt();
+		} while (key < Menu.Add.ordinal() || key > Menu.Exit.ordinal());
+		
+		return Menu.MenuAt(key);
+	}
+
+	public static void main(String[] args) {
+		Menu menu;									// 메뉴
+		Scanner stdIn = new Scanner(System.in);
+		ChainHash5 hash = new ChainHash5(15);
+		SimpleObject5 data;
+		int select = 0, result = 0;
+		
+		do {
+			switch (menu = SelectMenu()) {
+			case Add:								// 삽입
+				data = new SimpleObject5();
+				data.scanData("삽입", SimpleObject5.NO | SimpleObject5.NAME);
+				result = hash.add(data, SimpleObject5.NO_ORDER);
+				if (result == 1)
+					System.out.println("중복 데이터가 존재한다 " + data.toString());
+				else
+					System.out.println("입력 처리됨");
+				System.out.println();
+				break;
+				
+			case Delete:							// 삭제
+				data = new SimpleObject5();
+				data.scanData("삭제", SimpleObject5.NO);
+				result = hash.delete(data, SimpleObject5.NO_ORDER);
+				if (result == 1)
+					System.out.println("삭제 처리");
+				else
+					System.out.println("삭제 데이터가 없음");
+				System.out.println();
+				break;
+				
+			case Search:							// 검색
+				data = new SimpleObject5();
+				data.scanData("검색", SimpleObject5.NO);
+				result = hash.search(data, SimpleObject5.NO_ORDER);
+				if (result == 1)
+					System.out.println("검색 데이터가 존재한다." + data);
+				else
+					System.out.println("검색 데이터가 없음");
+				System.out.println();
+				break;
+				
+			case Show:								// 출력
+				hash.dump();
+				System.out.println();
+				break;
+				
+			case Exit:
+				System.out.println("프로그램을 종료합니다.");
+				break;
+			}
+		} while (menu != Menu.Exit);
+	}
+}
