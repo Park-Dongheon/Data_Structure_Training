@@ -5,7 +5,7 @@ package Chapter10_해시;
 import java.util.Scanner;
 
 //오픈 주소법에 의한 해시
-/*
+
 class OpenHash2 {
 
 //--- 버킷의 상태 ---//
@@ -16,6 +16,9 @@ static class Bucket {
     private int data;                   // 데이터
     private Status stat;              // 상태
 
+    Bucket() {
+    	stat = Status.EMPTY;
+    }
    
 }
 
@@ -24,7 +27,11 @@ private Bucket[] table;        // 해시 테이블
 
 //--- 생성자(constructor) ---//
 public OpenHash2(int size) {
-    
+    table = new Bucket[size];
+    for (int i = 0; i < size; i++) {
+    	table[i] = new Bucket();
+    }
+    this.size = size;
 }
 
 //--- 해시값을 구함 ---//
@@ -62,7 +69,7 @@ public void dump() {
     
 }
 }
-*/
+
 public class 실습10_3정수오픈해시 {
 //--- 메뉴 열거형 ---//
 enum Menu {
