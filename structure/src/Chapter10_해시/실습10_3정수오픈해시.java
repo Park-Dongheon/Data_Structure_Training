@@ -8,162 +8,264 @@ import java.util.Scanner;
 
 class OpenHash2 {
 
-//--- 버킷의 상태 ---//
-enum Status {OCCUPIED, EMPTY, DELETED}    // {데이터 저장, 비어있음, 삭제 완료}
+	//--- 버킷의 상태 ---//
+	enum Status {
+		OCCUPIED, EMPTY, DELETED
+	} // {데이터 저장, 비어있음, 삭제 완료}
 
-//--- 버킷 ---//
-static class Bucket {
-    private int data;                   // 데이터
-    private Status stat;              // 상태
+	//--- 버킷 ---//
+	static class Bucket {
+		private int data; 					// 키값, 데이터를 키값으로 함
+		private Status stat;				// 상태
 
-    Bucket() {
-    	stat = Status.EMPTY;
-    }
-   
-}
+		//--- 버킷 생성자 ---//
+		Bucket() {
+			stat = Status.EMPTY;			// 초기 버킷 상태를 초기화, 버킷이 비어있음
+		}
+		
+		//--- 모든 필드에 값을 설정 ---///
+		void set(int data, Status stat) {
+			this.data = data;				// 키값
+			this.stat = stat;				// 상태
+		}
+		
+		//--- 상태를 설정 ---//
+		void setStat(Status stat) {
+			this.stat = stat;
+		}
+		
+		//--- 키값을 반환 ---//
+		public int getData() {
+			return data;
+		}
 
-private int size;                                // 해시 테이블의 크기
-private Bucket[] table;        // 해시 테이블
+		@Override
+		public String toString() {
+			return "(data: " + data + ", stat: " + stat + ")";
+		}
 
-//--- 생성자(constructor) ---//
-public OpenHash2(int size) {
-    table = new Bucket[size];
-    for (int i = 0; i < size; i++) {
-    	table[i] = new Bucket();
-    }
-    this.size = size;
-}
+		
+	}
 
-//--- 해시값을 구함 ---//
-public int hashValue(int key) {
-    return hashCode() % size;
-}
+	private int size; 							// 해시 테이블의 크기
+	private Bucket[] table; 					// 해시 테이블
 
-//--- 재해시값을 구함 ---//
-public int rehashValue(int hash) {
-    return (hash + 1) % size;
-}
+	//--- 생성자(constructor) ---//
+	public OpenHash2(int size) {
+		try {
+			table = new Bucket[size];			// size 크기의 해시 테이블 생성
+			for (int i = 0; i < size; i++)		// 해시 테이블의 요소를 순회하며 버킷 생성 
+				table[i] = new Bucket();
+			this.size = size;					// size 초기화
+		} catch (OutOfMemoryError e) {			// 테이블을 생성할 수 없음
+			this.size = 0;
+		}
+	}
+	
 
-//--- 키값 key를 갖는 버킷 검색 ---//
-private Bucket searchNode(int key) {
-    
-}
+	//--- 해시값을 구함 ---//
+	public int hashValue(int key) {
+		return key % size;
+	}
 
-//--- 키값이 key인 요소를 검색(데이터를 반환)---//
-public int search(int key) {
-    
-}
 
-//--- 키값이 key인 데이터를 data의 요소로 추가 ---//
-public int add(int data) {
-    
-}
+	//--- 재해시값을 구함 ---//
+	public int rehashValue(int hash) {
+		return (hash + 1) % size;
+	}
 
-//--- 키값이 key인 요소를 삭제 ---//
-public int remove(int key) {
-    
-}
+	//--- 키값 key를 갖는 버킷 검색 ---//
+	private Bucket searchNode(int key) {
+		int hash = hashValue(key);												// 검색할 데이터의 해시값
+		Bucket selectB = table[hash];											// 선택한 버킷
+		
+		for (int i = 0; selectB.stat != Status.EMPTY && i < size; i++) {		// 선택한 버킷의 상태가 비어있지 않고, 해시 테이블의 크기 만큼 반복 
+			if (selectB.stat == Status.OCCUPIED && selectB.getData() == key) {	// 선택한 버킷의 상태가 가득차 있고, 검색할 키 값과 선택 버킷의 키 값이 같을 경우
+				return selectB;													// 선택한 버킷을 반환
+			}
+			// 선택한 버킷의 상태가 꽉 차 있지 않고, 검색할 키 값과 선택 버킷의 키 값이 다를 경우
+			hash = rehashValue(hash);											// 재해시를 하여 새로운 해시값 구함
+			selectB = table[hash];												// 해시 테이블에 재해시한 해시값을 저장하고, 선택한 버킷으로 설정
+		}
+		
+		return null;															// 선택한 버킷의 상태가 비어있거나, 해시 테이블의 크기를 벗어난 경우 null 반환
+	}
 
-//--- 해시 테이블을 덤프(dump) ---//
-public void dump() {
-    
-}
+	//--- 키값이 key인 요소를 검색(데이터를 반환)---//
+	public int search(int key) {
+		Bucket selectB = searchNode(key);										// 검색할 키 값으로 반환받은 버킷을 선택 버킷으로 설정 
+		
+		// 검색할 키값(data)이 존재하는지 확인
+		if (selectB != null) {													// 선택한 버킷이 null 일 때까지 반복
+			return selectB.getData();											// 선택한 버킷의 Data 를 반환
+		}
+		else {																	// 선택한 버킷이 null 일 경우 
+			return 0;															// 0을 반환
+		}
+
+	}
+
+	//--- 키값이 key인 데이터를 data의 요소로 추가 ---//
+	public int add(int data) {
+		if (search(data) != 0) {											// 이 키(data)값은 이미 등록됨
+			return 1;														// 1을 반환
+		}
+		
+		int hash = hashValue(data);											// 추가할 데이터의 해시값
+		Bucket selectB = table[hash];										// 선택한 버킷
+		
+		for (int i = 0; i < size; i++) {									// 테이블의 크기 만큼 순회
+			if (!(selectB.stat == Status.OCCUPIED)) {						// 선택한 버킷의 상태가 가득차 있지 않을 경우 == 선택한 버킷의 상태가 비어 있거나, 삭제된 상태일 경우
+				selectB.set(data, Status.OCCUPIED);							// 선택한 버킷에 키(data)값을 저장하고, 상태를 가득차 있는 상태로 설정
+				return 0;													// 0을 반환
+			}
+			// 선택한 버킷의 상태가 가득차 있는 경우
+			hash = rehashValue(hash);										// 재해시를 하여	새로운 해시값 구함
+			selectB = table[hash];											// 해시 테이블에 재해시한 해시값을 저장하고, 선택한 버킷으로 설정
+		}
+		
+		// 해시 테이블이 가득차 있어 더 이상 키(data)값을 추가할 수 없는 경우
+		return 2;															// 2를 반환
+	}
+
+	//--- 키값이 key인 요소를 삭제 ---//
+	public int remove(int key) {
+		Bucket selectB = searchNode(key);									// 삭제할 키 값으로 반환받은 버킷을 선택 버킷으로 설정
+		
+		if (selectB == null) {												// 선택 버킷이 null, 존재하지 않을 경우
+			return 1;														// 삭제할 키 값이 등록되지 않음
+		}
+		
+		// 삭제할 키 값이 등록되어 있는 경우
+		selectB.setStat(Status.DELETED);									// 선택 버킷의 상태를 DELETED(삭제 마침) 상태로 설정 
+		return 0;															// 삭제할 키 값이 등록되어 있음
+	}
+
+	//--- 해시 테이블을 덤프(dump) ---//
+	public void dump() {
+		for (int i = 0; i < size; i++) {									// 해시 테이블을 순회
+			System.out.printf("%02d : ", i);								// 해시 테이블 인덱스 표시
+			switch (table[i].stat) {										// 해시 테이블의 각 버킷의 상태에 따라 switch-case 문 실행
+			case OCCUPIED:													// 버킷이 OCCUPIED 상태일 경우
+				System.out.printf("%s \n", table[i]); break;				// 버킷의 키(data)값과 상태(stat) 출력
+			case EMPTY:														// 버킷이 EMPTY 상태일 경우
+				System.out.println("--- 버킷 비어 있음 ---"); break;
+			case DELETED:													// 버킷이 DELETED 상태일 경우
+				System.out.println("--- 버킷 삭제 마침 ---"); break;	
+			}
+		}
+
+	}
 }
 
 public class 실습10_3정수오픈해시 {
-//--- 메뉴 열거형 ---//
-enum Menu {
-   ADD(      "추가"),
-   REMOVE(   "삭제"),
-   SEARCH(   "검색"),
-   DUMP(     "표시"),
-   TERMINATE("종료");
+	//--- 메뉴 열거형 ---//
+	enum Menu {
+		ADD("추가"), REMOVE("삭제"), SEARCH("검색"), DUMP("표시"), TERMINATE("종료");
 
-   private final String message;        // 표시할 문자열
+		private final String message; // 표시할 문자열
 
-   static Menu MenuAt(int idx) {        // 순서가 idx번째인 열거를 반환
-       for (Menu m : Menu.values())
-           if (m.ordinal() == idx)
-               return m;
-       return null;
-   }
+		static Menu MenuAt(int idx) { // 순서가 idx번째인 열거를 반환
+			for (Menu m : Menu.values())
+				if (m.ordinal() == idx)
+					return m;
+			return null;
+		}
 
-   Menu(String string) {                // 생성자(constructor)
-       message = string;
-   }
+		Menu(String string) { // 생성자(constructor)
+			message = string;
+		}
 
-   String getMessage() {                // 표시할 문자열을 반환
-       return message;
-   }
-}
+		String getMessage() { // 표시할 문자열을 반환
+			return message;
+		}
+	}
 
-//--- 메뉴 선택 ---//
-static Menu SelectMenu() {
-	 Scanner stdIn = new Scanner(System.in);
-   int key;
-   do {
-       for (Menu m : Menu.values())
-           System.out.printf("(%d) %s  ", m.ordinal(), m.getMessage());
-       System.out.print(" : ");
-       key = stdIn.nextInt();
-   } while (key < Menu.ADD.ordinal() || key > Menu.TERMINATE.ordinal());
+	//--- 메뉴 선택 ---//
+	static Menu SelectMenu() {
+		Scanner stdIn = new Scanner(System.in);
+		int key;
+		do {
+			for (Menu m : Menu.values())
+				System.out.printf("(%d) %s  ", m.ordinal(), m.getMessage());
+			System.out.print(" : ");
+			key = stdIn.nextInt();
+		} while (key < Menu.ADD.ordinal() || key > Menu.TERMINATE.ordinal());
 
-   return Menu.MenuAt(key);
-}
+		return Menu.MenuAt(key);
+	}
 
-public static void main(String[] args) {
-   Menu menu;                                // 메뉴
-	 int select = 0, result = 0, val = 0;
-	 final int count = 8;
-	 Scanner stdIn = new Scanner(System.in);
-   OpenHash2 hash = new OpenHash2(13);
-   do {
-       switch (menu = SelectMenu()) {
-        case ADD :                           // 추가
+	public static void main(String[] args) {
+		Menu menu; 												// 메뉴
+		int select = 0, result = 0, val = 0;
+		final int count = 8;
+		Scanner stdIn = new Scanner(System.in);
+		OpenHash2 hash = new OpenHash2(13);
+		
+		do {
+			switch (menu = SelectMenu()) {
+			case ADD: 											// 추가
 				int[] input = new int[count];
-				for (int ix = 0; ix < count; ix++) {
+				
+				for (int ix = 0; ix < count; ix++) {			// size : 8의 배열을 난수로 초기화 
 					double d = Math.random();
 					input[ix] = (int) (d * 20);
-					System.out.print(" " + input[ix]);
+					System.out.print(input[ix] + " ");
 				}
-				for (int i = 0; i < count; i++) {
+				
+				System.out.println();
+				
+				for (int i = 0; i < count; i++) {				// 해시 테이블의 버킷을 순회하며 input 배열 요소를 저장
 					int k = hash.add(input[i]);
-				      switch (k) {
-		               case 1: System.out.printf("(%d) -> ", input[i]);
-		               			System.out.println("그 키값은 이미 등록되어 있습니다.");
-		                           break;
-		               case 2: System.out.println("해시 테이블이 가득 찼습니다.");
-		                           break;
-		              }
+					switch (k) {								// 해시 테이블의 버킷에 저장할 input 배열 요소가 중복 Data 인지 확인
+					case 1:
+						System.out.printf("(%d) -> ", input[i]);
+						System.out.println("그 키값은 이미 등록되어 있습니다.");
+						break;
+					case 2:
+						System.out.println("해시 테이블이 가득 찼습니다.");
+						break;
+					}
 				}
-            break;
+				System.out.println();
+				break;
 
-        case REMOVE :                               // 삭제
+			case REMOVE: 										// 삭제
 				System.out.println("Search Value:: ");
 				val = stdIn.nextInt();
 				result = hash.remove(val);
+				
 				if (result == 0)
-					System.out.println(" 검색 데이터가 존재한다");
+					System.out.println("삭제할 데이터가 존재한다.");
 				else
-					System.out.println(" 검색 데이터가 없음");
+					System.out.println("삭제할 데이터가 없음");
 				System.out.println();
-            break;
+				break;
 
-        case SEARCH :                               // 검색
+			case SEARCH: 										// 검색
 				System.out.println("Search Value:: ");
 				val = stdIn.nextInt();
 				result = hash.search(val);
+				
 				if (result != 0)
-					System.out.println(" 검색 데이터가 존재한다");
+					System.out.println("검색할 데이터가 존재한다. " + "(" + result + ")");
 				else
-					System.out.println(" 검색 데이터가 없음");
+					System.out.println("검색할 데이터가 없음");
 				System.out.println();
-            break;
+				break;
 
-        case DUMP :                                 // 표시
-            hash.dump();
-            break;
-       }
-   } while (menu != Menu.TERMINATE);
-}
+			case DUMP: 											// 표시
+				hash.dump();
+				System.out.println();
+				break;
+				
+			case TERMINATE:										// 종료
+				System.out.println("프로그램을 종료합니다.");
+				break;
+			
+			}
+		} while (menu != Menu.TERMINATE);
+		
+		stdIn.close();
+	}
 }

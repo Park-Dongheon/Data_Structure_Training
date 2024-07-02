@@ -5,8 +5,8 @@ import java.util.Scanner;
 //--- 해시를 구성하는 노드 ---//
 
 class Node {
-	int key; // 키값
-	Node next; // 뒤쪽 포인터(뒤쪽 노드에 대한 참조)
+	int key; 									// 키값
+	Node next; 									// 뒤쪽 포인터(뒤쪽 노드에 대한 참조)
 
 	// 생성자
 	public Node(int key, Node next) {
@@ -101,7 +101,7 @@ class SimpleChainHash {
 
 	//--- 해시 테이블을 덤프(dump) ---//
 	public void dump() {
-		for (int i = 0; i < size; i++) {					// 해시 테이블의 버킷을 순회
+		for (int i = 0; i < size; i++) {					// 해시 테이블을 순회
 			Node selectN = table[i];						// 각 버킷의 연결리스트(체이닝) 생성
 			System.out.printf("%02d : ", i);				// 버킷 출력
 			while (selectN != null) {						// 선택 노드가 null 일 때까지 반복
@@ -198,7 +198,7 @@ public class 실습10_1정수체인해시 {
 				val = stdIn.nextInt();
 				result = hash.search(val);
 				if (result == 1)
-					System.out.println("검색 데이터가 존재한다. " + val);
+					System.out.println("검색 데이터가 존재한다. " + "(" + val + ")");
 				else
 					System.out.println("검색 데이터가 없음");
 				System.out.println();
