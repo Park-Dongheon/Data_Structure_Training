@@ -14,6 +14,6 @@
     <fullyQualifiedTypeName name="java.time.format.DateTimeFormatter"/>
     <fullyQualifiedTypeName name="java.time.LocalDate"/>
     <fullyQualifiedTypeName name="java.lang.Integer"/>
-    <fullyQualifiedTypeName name="Chapter10_해시.OpenHash.Status"/>
     <fullyQualifiedTypeName name="Chapter10_해시.OpenHash2.Status"/>
+    <fullyQualifiedTypeName name="Chapter10_해시.OpenHash.Status"/>
 </qualifiedTypeNameHistroy>

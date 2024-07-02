@@ -16,22 +16,23 @@ class SimpleObject5 {
 	String no; 					// 회원번호(키 값)
 	String name; 				// 이름
 	
-	//--- 문자열 표현을 반환 ---//
-	@Override
-	public String toString() {
-		return "(회원번호: " + no + ", 이름: " + name + ")";
-	}
 
 	//--- 기본 생성자 ---//
 	public SimpleObject5() {
 		this.no = null;
 		this.name = null;
 	}
-
+	
 	//--- 생성자 초기화 ---//
 	public SimpleObject5(String no, String name) {
 		this.no = no;
 		this.name = name;
+	}
+
+	//--- 문자열 표현을 반환 ---//
+	@Override
+	public String toString() {
+		return "(회원번호: " + no + ", 이름: " + name + ")";
 	}
 
 	//--- 데이터 입력 ---//
@@ -40,7 +41,7 @@ class SimpleObject5 {
 		System.out.println(guide + "할 데이터를 입력하세요." + sw);
 		
 		if ((sw & NO) == NO) {
-			System.out.print("번호: ");
+			System.out.print("회원번호: ");
 			no = sc.next();
 		}
 		if ((sw & NAME) == NAME) {
@@ -61,7 +62,7 @@ class SimpleObject5 {
 		}
 	}
 	
-	//--- 이름으로 순서를 매기는 comparator ---??
+	//--- 이름으로 순서를 매기는 comparator ---//
 	public static final Comparator<SimpleObject5> NAME_ORDER = new NameOrderComparator();
 	
 	public static class NameOrderComparator implements Comparator<SimpleObject5> {
